@@ -387,13 +387,25 @@
                     <button class="filter-chip" data-brand="Vans" onclick="setBrandFilter('Vans')">Vans</button>
                     <button class="filter-chip" data-brand="Converse" onclick="setBrandFilter('Converse')">Converse</button>
                     <button class="filter-chip" data-brand="Puma" onclick="setBrandFilter('Puma')">Puma</button>
+                    <button class="filter-chip" data-brand="Lokal" onclick="setBrandFilter('Lokal')">Brand Lokal</button>
+                    <button class="filter-chip" data-brand="Crocs" onclick="setBrandFilter('Crocs')">Crocs</button>
+                </div>
+                <p class="text-[10px] uppercase tracking-widest text-white/30 mb-3">Kategori</p>
+                <div class="flex flex-wrap gap-2 mb-5" id="categoryFilters">
+                    <button class="filter-chip active" data-category="all" onclick="setCategoryFilter('all')">Semua</button>
+                    <button class="filter-chip" data-category="sneakers" onclick="setCategoryFilter('sneakers')">Sneakers</button>
+                    <button class="filter-chip" data-category="formal" onclick="setCategoryFilter('formal')">Formal/Pantofel</button>
+                    <button class="filter-chip" data-category="heels" onclick="setCategoryFilter('heels')">Heels</button>
+                    <button class="filter-chip" data-category="sandals" onclick="setCategoryFilter('sandals')">Sandals/Slide</button>
+                    <button class="filter-chip" data-category="crocs" onclick="setCategoryFilter('crocs')">Crocs</button>
                 </div>
                 <p class="text-[10px] uppercase tracking-widest text-white/30 mb-3">Harga</p>
                 <div class="flex flex-wrap gap-2 mb-5" id="priceFilters">
                     <button class="filter-chip active" data-price="all" onclick="setPriceFilter('all')">Semua</button>
-                    <button class="filter-chip" data-price="under800" onclick="setPriceFilter('under800')">< Rp 800K</button>
-                    <button class="filter-chip" data-price="800to1200" onclick="setPriceFilter('800to1200')">Rp 800K – 1.2JT</button>
-                    <button class="filter-chip" data-price="above1200" onclick="setPriceFilter('above1200')">> Rp 1.2JT</button>
+                    <button class="filter-chip" data-price="under200" onclick="setPriceFilter('under200')">< Rp 200K</button>
+                    <button class="filter-chip" data-price="200to500" onclick="setPriceFilter('200to500')">Rp 200K – 500K</button>
+                    <button class="filter-chip" data-price="500to1000" onclick="setPriceFilter('500to1000')">Rp 500K – 1JT</button>
+                    <button class="filter-chip" data-price="above1000" onclick="setPriceFilter('above1000')">> Rp 1JT</button>
                 </div>
             </div>
             <div class="mt-6">
@@ -494,25 +506,56 @@
             delivered: locationStages.pelanggan
         };
 
+        // PRODUCTS - Lengkap dengan Brand Lokal, Pantofel, Heels, Crocs, dll
         let products = [
-            { id: 1, name: "Nike Air Force 1", brand: "Nike", price: 1200000, priceFormatted: "Rp 1.200.000", rating: 4.9, stock: { "39": 5, "40": 8, "41": 12, "42": 15, "43": 10 }, imageColor: "#1a1a2e", desc: "Ikon jalanan yang tak lekang oleh waktu. Dibuat dengan bahan kulit premium dengan sol yang nyaman untuk aktivitas harian." },
-            { id: 2, name: "Nike Air Max 90", brand: "Nike", price: 1650000, priceFormatted: "Rp 1.650.000", rating: 4.8, stock: { "40": 6, "41": 4, "42": 7, "43": 3, "44": 2 }, imageColor: "#2d1b4e", desc: "Teknologi Air Max yang ikonik dengan desain retro modern. Nyaman untuk daily wear." },
-            { id: 3, name: "Adidas Stan Smith", brand: "Adidas", price: 980000, priceFormatted: "Rp 980.000", rating: 4.7, stock: { "39": 10, "40": 12, "41": 8, "42": 6, "43": 4 }, imageColor: "#1e3a2f", desc: "Desain timeless, nyaman dipakai seharian. Kulit premium dengan detail logo minimalist." },
-            { id: 4, name: "Adidas Ultraboost", brand: "Adidas", price: 2100000, priceFormatted: "Rp 2.100.000", rating: 4.9, stock: { "40": 3, "41": 5, "42": 4, "43": 2 }, imageColor: "#1e2a3a", desc: "Running shoe dengan teknologi Boost terbaik. Responsif dan super nyaman." },
-            { id: 5, name: "New Balance 550", brand: "New Balance", price: 1450000, priceFormatted: "Rp 1.450.000", rating: 4.8, stock: { "40": 4, "41": 6, "42": 5, "43": 3, "44": 2 }, imageColor: "#3d2b1f", desc: "Basketball silhouette klasik yang kembali populer. Kombinasi kulit dan suede." },
-            { id: 6, name: "New Balance 327", brand: "New Balance", price: 1250000, priceFormatted: "Rp 1.250.000", rating: 4.7, stock: { "38": 7, "39": 5, "40": 6, "41": 4, "42": 3 }, imageColor: "#4a2c2c", desc: "Desain retro futuristik dengan outsole yang agresif. Sangat ringan dan nyaman." },
-            { id: 7, name: "Vans Old Skool", brand: "Vans", price: 750000, priceFormatted: "Rp 750.000", rating: 4.6, stock: { "38": 15, "39": 12, "40": 10, "41": 8, "42": 6, "43": 4 }, imageColor: "#2c2c2c", desc: "Classic skate shoe dengan stripe sidewall yang ikonik. Canvas dan suede combo." },
-            { id: 8, name: "Vans Sk8-Hi", brand: "Vans", price: 890000, priceFormatted: "Rp 890.000", rating: 4.7, stock: { "39": 8, "40": 7, "41": 5, "42": 4, "43": 3 }, imageColor: "#1a1a2e", desc: "High top sneaker dengan ankle support ekstra. Cocok untuk style streetwear." },
-            { id: 9, name: "Converse Chuck 70", brand: "Converse", price: 890000, priceFormatted: "Rp 890.000", rating: 4.5, stock: { "38": 20, "39": 18, "40": 15, "41": 12, "42": 10, "43": 8 }, imageColor: "#2d1b1b", desc: "Premium canvas dengan insole yang lebih nyaman. Desain vintage yang timeless." },
-            { id: 10, name: "Converse Run Star Hike", brand: "Converse", price: 1350000, priceFormatted: "Rp 1.350.000", rating: 4.8, stock: { "39": 5, "40": 4, "41": 3, "42": 2 }, imageColor: "#1a3a2a", desc: "Platform lugged sole yang ekstra tebal. Tampilan bold dan unik." },
-            { id: 11, name: "Puma RS-X", brand: "Puma", price: 1100000, priceFormatted: "Rp 1.100.000", rating: 4.4, stock: { "40": 6, "41": 5, "42": 4, "43": 3 }, imageColor: "#4a2e1e", desc: "Chunky sneaker dengan mesh dan suede layers. Retro futuristic look." },
-            { id: 12, name: "Puma Suede Classic", brand: "Puma", price: 750000, priceFormatted: "Rp 750.000", rating: 4.5, stock: { "38": 12, "39": 10, "40": 8, "41": 6, "42": 5 }, imageColor: "#2e1a2e", desc: "Suede upper dengan formstrip yang ikonik. B-boy style yang legendaris." }
+            // Brand Internasional (Sneakers)
+            { id: 1, name: "Nike Air Force 1", brand: "Nike", category: "sneakers", price: 1200000, priceFormatted: "Rp 1.200.000", rating: 4.9, stock: { "39": 5, "40": 8, "41": 12, "42": 15, "43": 10 }, imageColor: "#1a1a2e", desc: "Ikon jalanan yang tak lekang oleh waktu. Dibuat dengan bahan kulit premium dengan sol yang nyaman untuk aktivitas harian." },
+            { id: 2, name: "Nike Air Max 90", brand: "Nike", category: "sneakers", price: 1650000, priceFormatted: "Rp 1.650.000", rating: 4.8, stock: { "40": 6, "41": 4, "42": 7, "43": 3, "44": 2 }, imageColor: "#2d1b4e", desc: "Teknologi Air Max yang ikonik dengan desain retro modern. Nyaman untuk daily wear." },
+            { id: 3, name: "Adidas Stan Smith", brand: "Adidas", category: "sneakers", price: 980000, priceFormatted: "Rp 980.000", rating: 4.7, stock: { "39": 10, "40": 12, "41": 8, "42": 6, "43": 4 }, imageColor: "#1e3a2f", desc: "Desain timeless, nyaman dipakai seharian. Kulit premium dengan detail logo minimalist." },
+            { id: 4, name: "Adidas Ultraboost", brand: "Adidas", category: "sneakers", price: 2100000, priceFormatted: "Rp 2.100.000", rating: 4.9, stock: { "40": 3, "41": 5, "42": 4, "43": 2 }, imageColor: "#1e2a3a", desc: "Running shoe dengan teknologi Boost terbaik. Responsif dan super nyaman." },
+            { id: 5, name: "New Balance 550", brand: "New Balance", category: "sneakers", price: 1450000, priceFormatted: "Rp 1.450.000", rating: 4.8, stock: { "40": 4, "41": 6, "42": 5, "43": 3, "44": 2 }, imageColor: "#3d2b1f", desc: "Basketball silhouette klasik yang kembali populer. Kombinasi kulit dan suede." },
+            { id: 6, name: "New Balance 327", brand: "New Balance", category: "sneakers", price: 1250000, priceFormatted: "Rp 1.250.000", rating: 4.7, stock: { "38": 7, "39": 5, "40": 6, "41": 4, "42": 3 }, imageColor: "#4a2c2c", desc: "Desain retro futuristik dengan outsole yang agresif. Sangat ringan dan nyaman." },
+            { id: 7, name: "Vans Old Skool", brand: "Vans", category: "sneakers", price: 750000, priceFormatted: "Rp 750.000", rating: 4.6, stock: { "38": 15, "39": 12, "40": 10, "41": 8, "42": 6, "43": 4 }, imageColor: "#2c2c2c", desc: "Classic skate shoe dengan stripe sidewall yang ikonik. Canvas dan suede combo." },
+            { id: 8, name: "Vans Sk8-Hi", brand: "Vans", category: "sneakers", price: 890000, priceFormatted: "Rp 890.000", rating: 4.7, stock: { "39": 8, "40": 7, "41": 5, "42": 4, "43": 3 }, imageColor: "#1a1a2e", desc: "High top sneaker dengan ankle support ekstra. Cocok untuk style streetwear." },
+            { id: 9, name: "Converse Chuck 70", brand: "Converse", category: "sneakers", price: 890000, priceFormatted: "Rp 890.000", rating: 4.5, stock: { "38": 20, "39": 18, "40": 15, "41": 12, "42": 10, "43": 8 }, imageColor: "#2d1b1b", desc: "Premium canvas dengan insole yang lebih nyaman. Desain vintage yang timeless." },
+            { id: 10, name: "Converse Run Star Hike", brand: "Converse", category: "sneakers", price: 1350000, priceFormatted: "Rp 1.350.000", rating: 4.8, stock: { "39": 5, "40": 4, "41": 3, "42": 2 }, imageColor: "#1a3a2a", desc: "Platform lugged sole yang ekstra tebal. Tampilan bold dan unik." },
+            { id: 11, name: "Puma RS-X", brand: "Puma", category: "sneakers", price: 1100000, priceFormatted: "Rp 1.100.000", rating: 4.4, stock: { "40": 6, "41": 5, "42": 4, "43": 3 }, imageColor: "#4a2e1e", desc: "Chunky sneaker dengan mesh dan suede layers. Retro futuristic look." },
+            { id: 12, name: "Puma Suede Classic", brand: "Puma", category: "sneakers", price: 750000, priceFormatted: "Rp 750.000", rating: 4.5, stock: { "38": 12, "39": 10, "40": 8, "41": 6, "42": 5 }, imageColor: "#2e1a2e", desc: "Suede upper dengan formstrip yang ikonik. B-boy style yang legendaris." },
+            
+            // Brand LOKAL - Sneakers
+            { id: 13, name: "Compass Gazelle High", brand: "Lokal", category: "sneakers", price: 450000, priceFormatted: "Rp 450.000", rating: 4.7, stock: { "38": 10, "39": 12, "40": 15, "41": 10, "42": 8, "43": 5 }, imageColor: "#c4a47c", desc: "Sneakers high-top lokal dengan kualitas premium. Desain klasik yang timeless." },
+            { id: 14, name: "Ventela High Top", brand: "Lokal", category: "sneakers", price: 399000, priceFormatted: "Rp 399.000", rating: 4.6, stock: { "38": 15, "39": 18, "40": 20, "41": 15, "42": 12, "43": 8 }, imageColor: "#e8d5b7", desc: "Sneakers khas anak muda Indonesia. Nyaman dipakai sehari-hari." },
+            { id: 15, name: "Patrobas Low Profile", brand: "Lokal", category: "sneakers", price: 289000, priceFormatted: "Rp 289.000", rating: 4.5, stock: { "38": 20, "39": 22, "40": 25, "41": 20, "42": 15, "43": 10 }, imageColor: "#a08c6f", desc: "Sneakers kasual dengan desain minimalis dan harga terjangkau." },
+            { id: 16, name: "Brodo Derby Sneakers", brand: "Lokal", category: "sneakers", price: 599000, priceFormatted: "Rp 599.000", rating: 4.8, stock: { "39": 8, "40": 10, "41": 12, "42": 10, "43": 6 }, imageColor: "#8b7355", desc: "Fusion antara sepatu formal dan sneakers. Cocok untuk gaya smart casual." },
+            
+            // Pantofel / Formal (Lokal)
+            { id: 17, name: "Pantofel Kulit Pria", brand: "Lokal", category: "formal", price: 350000, priceFormatted: "Rp 350.000", rating: 4.4, stock: { "39": 10, "40": 12, "41": 10, "42": 8, "43": 5, "44": 3 }, imageColor: "#5c3a21", desc: "Pantofel kulit sintetis elegan untuk acara formal atau ke kantor. Nyaman dipakai lama." },
+            { id: 18, name: "Oxford Formal Shoes", brand: "Lokal", category: "formal", price: 425000, priceFormatted: "Rp 425.000", rating: 4.5, stock: { "39": 8, "40": 10, "41": 12, "42": 8, "43": 5 }, imageColor: "#4a2a1a", desc: "Sepatu Oxford klasik dengan desain rapi. Cocok untuk meeting dan acara resmi." },
+            { id: 19, name: "Monk Strap Shoes", brand: "Lokal", category: "formal", price: 475000, priceFormatted: "Rp 475.000", rating: 4.6, stock: { "38": 5, "39": 7, "40": 8, "41": 6, "42": 5 }, imageColor: "#6b3a2a", desc: "Model monk strap yang elegan dengan bahan kulit premium. Tampil beda dari yang lain." },
+            { id: 20, name: "Loafers Casual", brand: "Lokal", category: "formal", price: 275000, priceFormatted: "Rp 275.000", rating: 4.3, stock: { "38": 15, "39": 18, "40": 20, "41": 15, "42": 12, "43": 8 }, imageColor: "#d4a373", desc: "Loafers kasual yang bisa dipakai untuk berbagai acara. Simple dan stylish." },
+            
+            // Heels (Lokal)
+            { id: 21, name: "Heels Platform Wanita", brand: "Lokal", category: "heels", price: 320000, priceFormatted: "Rp 320.000", rating: 4.5, stock: { "36": 12, "37": 15, "38": 18, "39": 12, "40": 10 }, imageColor: "#d4af37", desc: "Heels platform dengan desain modern. Nyaman untuk beraktivitas seharian." },
+            { id: 22, name: "Stiletto High Heels", brand: "Lokal", category: "heels", price: 380000, priceFormatted: "Rp 380.000", rating: 4.4, stock: { "36": 8, "37": 10, "38": 12, "39": 8, "40": 6 }, imageColor: "#8b0000", desc: "Stiletto dengan heels tinggi. Elegan untuk pesta atau acara formal." },
+            { id: 23, name: "Wedges Heels", brand: "Lokal", category: "heels", price: 290000, priceFormatted: "Rp 290.000", rating: 4.6, stock: { "36": 10, "37": 12, "38": 15, "39": 10, "40": 8 }, imageColor: "#c2a575", desc: "Wedges yang nyaman untuk dipakai sehari-hari. Tidak bikin pegal." },
+            { id: 24, name: "Kitten Heels", brand: "Lokal", category: "heels", price: 259000, priceFormatted: "Rp 259.000", rating: 4.5, stock: { "36": 15, "37": 18, "38": 20, "39": 15, "40": 12 }, imageColor: "#eba834", desc: "Heels rendah yang feminin dan nyaman. Cocok untuk acara semi formal." },
+            
+            // Crocs (Brand internasional tapi sudah masuk ke Indonesia)
+            { id: 25, name: "Crocs Classic Clog", brand: "Crocs", category: "crocs", price: 399000, priceFormatted: "Rp 399.000", rating: 4.5, stock: { "37": 20, "38": 25, "39": 22, "40": 20, "41": 18, "42": 15, "43": 12 }, imageColor: "#74b9ff", desc: "Sepatu santai yang ringan, nyaman, dan breathable. Bisa dihias dengan Jibbitz™." },
+            { id: 26, name: "Crocs LiteRide Clog", brand: "Crocs", category: "crocs", price: 550000, priceFormatted: "Rp 550.000", rating: 4.7, stock: { "38": 15, "39": 18, "40": 20, "41": 15, "42": 12 }, imageColor: "#e17055", desc: "Teknologi LiteRide™ untuk kenyamanan maksimal. Sol yang super empuk dan ringan." },
+            { id: 27, name: "Crocs Swiftwater Sandal", brand: "Crocs", category: "crocs", price: 325000, priceFormatted: "Rp 325.000", rating: 4.4, stock: { "37": 18, "38": 22, "39": 25, "40": 20, "41": 15, "42": 12 }, imageColor: "#00cec9", desc: "Sandal crocs yang cocok untuk kegiatan air. Anti slip dan cepat kering." },
+            
+            // Sandals / Slide (Lokal)
+            { id: 28, name: "Sandals Slide Premium", brand: "Lokal", category: "sandals", price: 120000, priceFormatted: "Rp 120.000", rating: 4.3, stock: { "38": 25, "39": 30, "40": 35, "41": 25, "42": 20, "43": 15 }, imageColor: "#495057", desc: "Sandals slide dengan EVA foam berkualitas. Ringan dan anti slip untuk penggunaan sehari-hari." },
+            { id: 29, name: "Flip Flops Casual", brand: "Lokal", category: "sandals", price: 85000, priceFormatted: "Rp 85.000", rating: 4.2, stock: { "38": 30, "39": 35, "40": 40, "41": 30, "42": 25, "43": 20 }, imageColor: "#fdcb6e", desc: "Flip flops nyaman untuk santai di rumah atau jalan-jalan santai." },
+            { id: 30, name: "Sport Sandals", brand: "Lokal", category: "sandals", price: 189000, priceFormatted: "Rp 189.000", rating: 4.4, stock: { "39": 15, "40": 18, "41": 20, "42": 15, "43": 12, "44": 10 }, imageColor: "#6c5ce7", desc: "Sandal sport dengan tali pengikat yang kuat. Cocok untuk outdoor activity." }
         ];
 
         let cart = [];
         let orders = JSON.parse(localStorage.getItem('orders') || '[]');
         let reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
         let currentBrand = "all";
+        let currentCategory = "all";
         let currentPrice = "all";
         let currentSearch = "";
 
@@ -580,7 +623,7 @@
                         (position) => resolve({ lat: position.coords.latitude, lng: position.coords.longitude }),
                         (error) => {
                             console.log("Geolocation error:", error);
-                            resolve({ lat: -6.9175, lng: 107.6191 }); // Default Bandung
+                            resolve({ lat: -6.9175, lng: 107.6191 });
                         }
                     );
                 } else {
@@ -589,7 +632,6 @@
             });
         }
 
-        // Function untuk pick address from map (simulasi drag marker)
         let selectedMapLocation = null;
         let addressMap = null;
         let addressMarker = null;
@@ -611,7 +653,6 @@
             addressMarker.on('dragend', async function(e) {
                 const pos = e.target.getLatLng();
                 selectedMapLocation = { lat: pos.lat, lng: pos.lng };
-                // Reverse geocoding (simulasi)
                 const addressInput = document.getElementById('address');
                 if (addressInput) {
                     addressInput.value = `Lokasi terpilih: ${pos.lat.toFixed(6)}, ${pos.lng.toFixed(6)}`;
@@ -619,7 +660,6 @@
                 showToast("Lokasi berhasil dipilih!");
             });
             
-            // Klik pada map untuk pindah marker
             addressMap.on('click', function(e) {
                 addressMarker.setLatLng(e.latlng);
                 selectedMapLocation = { lat: e.latlng.lat, lng: e.latlng.lng };
@@ -638,6 +678,14 @@
             filterProducts();
         }
 
+        function setCategoryFilter(category) {
+            currentCategory = category;
+            document.querySelectorAll('#categoryFilters .filter-chip').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.category === category);
+            });
+            filterProducts();
+        }
+
         function setPriceFilter(price) {
             currentPrice = price;
             document.querySelectorAll('#priceFilters .filter-chip').forEach(btn => {
@@ -649,13 +697,16 @@
         function filterProducts() {
             let filtered = products.filter(p => {
                 if (currentBrand !== "all" && p.brand !== currentBrand) return false;
-                if (currentPrice === "under800" && p.price >= 800000) return false;
-                if (currentPrice === "800to1200" && (p.price < 800000 || p.price > 1200000)) return false;
-                if (currentPrice === "above1200" && p.price <= 1200000) return false;
+                if (currentCategory !== "all" && p.category !== currentCategory) return false;
+                if (currentPrice === "under200" && p.price >= 200000) return false;
+                if (currentPrice === "200to500" && (p.price < 200000 || p.price > 500000)) return false;
+                if (currentPrice === "500to1000" && (p.price < 500000 || p.price > 1000000)) return false;
+                if (currentPrice === "above1000" && p.price <= 1000000) return false;
                 if (currentSearch && !p.name.toLowerCase().includes(currentSearch.toLowerCase()) && !p.brand.toLowerCase().includes(currentSearch.toLowerCase())) return false;
                 return true;
             });
-            document.getElementById('resultCount').innerHTML = `Menampilkan ${filtered.length} produk`;
+            const resultCount = document.getElementById('resultCount');
+            if (resultCount) resultCount.innerHTML = `Menampilkan ${filtered.length} produk`;
             renderProductGrid(filtered);
         }
 
@@ -665,7 +716,7 @@
             grid.innerHTML = productsToRender.map(p => `
                 <div class="product-card rounded-2xl p-4" onclick="openProductModal(${p.id})">
                     <div class="product-img-placeholder w-full h-32 rounded-xl mb-3 flex items-center justify-center" style="background: ${p.imageColor}">
-                        <i class="fas fa-shoe-prints text-white/20 text-5xl"></i>
+                        <i class="fas ${getIconByCategory(p.category)} text-white/20 text-5xl"></i>
                     </div>
                     <h4 class="font-semibold text-sm">${p.name}</h4>
                     <p class="text-white/40 text-xs mt-1">${p.brand}</p>
@@ -681,6 +732,17 @@
                     </button>
                 </div>
             `).join('');
+        }
+
+        function getIconByCategory(category) {
+            const icons = {
+                sneakers: "fa-shoe-prints",
+                formal: "fa-briefcase",
+                heels: "fa-female",
+                crocs: "fa-shoe-prints",
+                sandals: "fa-shoe-prints"
+            };
+            return icons[category] || "fa-shoe-prints";
         }
 
         function quickAddToCart(productId) {
@@ -737,7 +799,7 @@
             modalContent.innerHTML = `
                 <div class="grid md:grid-cols-2 gap-6">
                     <div class="product-img-placeholder rounded-2xl h-64 flex items-center justify-center" style="background: ${product.imageColor}">
-                        <i class="fas fa-shoe-prints text-white/15 text-7xl"></i>
+                        <i class="fas ${getIconByCategory(product.category)} text-white/15 text-7xl"></i>
                     </div>
                     <div>
                         <p class="text-white/30 text-[10px] uppercase tracking-widest mb-1">${product.brand}</p>
@@ -852,7 +914,7 @@
                         ${cart.map((item, idx) => `
                             <div class="cart-item rounded-xl p-4 flex items-center gap-4 slide-in" data-idx="${idx}">
                                 <div class="w-14 h-14 product-img-placeholder rounded-xl flex items-center justify-center flex-shrink-0" style="background: ${item.imageColor}">
-                                    <i class="fas fa-shoe-prints text-white/15 text-xl"></i>
+                                    <i class="fas ${getIconByCategory(item.category)} text-white/15 text-xl"></i>
                                 </div>
                                 <div class="flex-1">
                                     <p class="text-sm font-semibold">${item.name}</p>
@@ -913,7 +975,6 @@
             }
         }
 
-        // ORDER & TRACKING
         function createOrder(shippingData, paymentMethod, selectedBank, items, total, mapLocation) {
             const orderId = "SS" + Date.now().toString().slice(-8);
             const newOrder = {
@@ -1008,7 +1069,7 @@
                     <div class="border-t border-white/10 pt-3">
                         ${order.items.slice(0, 2).map(item => `
                             <div class="flex items-center gap-3 text-sm mb-2">
-                                <i class="fas fa-shoe-prints text-white/20"></i>
+                                <i class="fas ${getIconByCategory(item.category)} text-white/20"></i>
                                 <span>${item.name} (${item.size}) x${item.qty}</span>
                             </div>
                         `).join('')}
@@ -1062,7 +1123,6 @@
                         <p class="text-xs text-white/30">${new Date(order.date).toLocaleDateString('id-ID')}</p>
                     </div>
                     
-                    <!-- Live Tracking Map -->
                     <div class="mb-4">
                         <p class="text-xs font-semibold mb-2 flex items-center gap-2">
                             <i class="fas fa-map-marked-alt text-emerald-400"></i> Live Tracking Kurir
@@ -1073,7 +1133,6 @@
                         </p>
                     </div>
                     
-                    <!-- Tracking Timeline -->
                     <div class="flex justify-between mb-6">
                         ${orderStatuses.map((step, idx) => `
                             <div class="timeline-step text-center flex-1 ${idx <= currentStatusIndex ? 'completed' : ''} ${idx === currentStatusIndex ? 'active' : ''}">
@@ -1086,7 +1145,6 @@
                         `).join('')}
                     </div>
                     
-                    <!-- Status History -->
                     <div class="bg-white/5 rounded-xl p-4">
                         <p class="text-xs font-semibold mb-3">Riwayat Status</p>
                         <div class="space-y-3">
@@ -1103,7 +1161,6 @@
                         </div>
                     </div>
                     
-                    <!-- Shipping Address -->
                     <div class="bg-white/5 rounded-xl p-4 mt-4">
                         <p class="text-xs font-semibold mb-2">Alamat Pengiriman</p>
                         <p class="text-sm">${order.shipping.firstName} ${order.shipping.lastName}</p>
@@ -1112,7 +1169,6 @@
                         ${order.shippingLocation ? `<p class="text-xs text-white/40 mt-2">📍 Koordinat: ${order.shippingLocation.lat.toFixed(6)}, ${order.shippingLocation.lng.toFixed(6)}</p>` : ''}
                     </div>
                     
-                    <!-- Items -->
                     <div class="bg-white/5 rounded-xl p-4 mt-4">
                         <p class="text-xs font-semibold mb-2">Item Pesanan</p>
                         ${order.items.map(item => `
@@ -1146,7 +1202,6 @@
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
             }).addTo(currentTrackingMap);
             
-            // Marker kurir (truck)
             const truckIcon = L.divIcon({
                 html: '<div style="background: #10b981; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 0 10px #10b981;"><i class="fas fa-truck" style="color: white; font-size: 14px;"></i></div>',
                 className: 'live-track-marker',
@@ -1157,7 +1212,6 @@
             const kurirMarker = L.marker([currentPos.lat, currentPos.lng], { icon: truckIcon }).addTo(currentTrackingMap);
             kurirMarker.bindPopup(`<b>Kurir StreetSole</b><br>${currentPos.name}`).openPopup();
             
-            // Marker tujuan (pelanggan)
             const homeIcon = L.divIcon({
                 html: '<div style="background: #ef4444; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white;"><i class="fas fa-home" style="color: white; font-size: 12px;"></i></div>',
                 className: '',
@@ -1167,7 +1221,6 @@
             L.marker([destPos.lat, destPos.lng], { icon: homeIcon }).addTo(currentTrackingMap)
                 .bindPopup('<b>Alamat Anda</b>').openPopup();
             
-            // Route line (simulasi garis)
             const latlngs = [
                 [currentPos.lat, currentPos.lng],
                 [(currentPos.lat + destPos.lat) / 2, (currentPos.lng + destPos.lng) / 2],
@@ -1175,11 +1228,9 @@
             ];
             L.polyline(latlngs, { color: '#10b981', weight: 3, opacity: 0.7, dashArray: '10, 10' }).addTo(currentTrackingMap);
             
-            // Bounds untuk melihat semua marker
             const bounds = L.latLngBounds([currentPos, destPos]);
             currentTrackingMap.fitBounds(bounds, { padding: [50, 50] });
             
-            // Update lokasi realtime jika pesanan dalam perjalanan
             if (order.status !== 'delivered' && order.status !== 'paid') {
                 if (trackingInterval) clearInterval(trackingInterval);
                 
@@ -1215,7 +1266,6 @@
             modal.classList.remove('active');
         }
 
-        // CHECKOUT
         let checkoutStep = 1;
         let selectedPayment = "transfer";
         let selectedBank = null;
@@ -1362,12 +1412,7 @@
             renderCheckout();
         }
 
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text);
-            showToast("Nomor Virtual Account disalin!");
-        }
-
-        async function nextCheckoutStep() {
+        function nextCheckoutStep() {
             if (checkoutStep === 1) {
                 const firstName = document.getElementById('firstName')?.value;
                 if (!firstName) { showToast("Masukkan nama depan", false); return; }
@@ -1440,7 +1485,6 @@
             checkoutStep = 1;
         }
 
-        // REVIEW
         function openReviewForOrder(orderId) {
             const order = orders.find(o => o.id === orderId);
             if (!order || order.status !== "delivered") return;
@@ -1460,7 +1504,7 @@
                             <div class="space-y-2 mt-3 max-h-40 overflow-y-auto">
                                 ${order.items.map(item => `
                                     <div class="flex items-center gap-3 py-2 border-b border-white/10">
-                                        <i class="fas fa-shoe-prints text-white/20"></i>
+                                        <i class="fas ${getIconByCategory(item.category)} text-white/20"></i>
                                         <div>
                                             <p class="text-sm">${item.name}</p>
                                             <p class="text-xs text-white/40">Size ${item.size} x${item.qty}</p>
@@ -1567,7 +1611,7 @@
                     </button>
                 </div>
                 <div class="space-y-3 mt-4">
-                    ${allReviews.slice(0, 5).map(r => `
+                    ${allReviews.slice(0, 8).map(r => `
                         <div class="review-card rounded-2xl p-5">
                             <div class="flex items-start justify-between mb-3">
                                 <div class="flex items-center gap-3">
@@ -1592,17 +1636,20 @@
         const defaultReviews = [
             { id: 1, productName: "Nike Air Force 1", userName: "Alex Style", rating: 5, comment: "Kualitas luar biasa! Recommended banget untuk sneaker lovers. Pengiriman cepat dan aman.", date: new Date().toISOString() },
             { id: 2, productName: "Adidas Stan Smith", userName: "Rina Dewi", rating: 4, comment: "Desain timeless, nyaman dipakai seharian. Cocok untuk daily wear.", date: new Date().toISOString() },
-            { id: 3, productName: "Vans Old Skool", userName: "Budi Santoso", rating: 4, comment: "Sesuai ekspektasi, bahan berkualitas. Ukuran pas.", date: new Date().toISOString() }
+            { id: 3, productName: "Vans Old Skool", userName: "Budi Santoso", rating: 4, comment: "Sesuai ekspektasi, bahan berkualitas. Ukuran pas.", date: new Date().toISOString() },
+            { id: 4, productName: "Compass Gazelle High", userName: "Ahmad Fauzi", rating: 5, comment: "Sepatu lokal kualitas premium! Bangga pakai produk Indonesia.", date: new Date().toISOString() },
+            { id: 5, productName: "Crocs Classic Clog", userName: "Sarah M.", rating: 4, comment: "Nyaman banget buat di rumah atau jalan santai.", date: new Date().toISOString() },
+            { id: 6, productName: "Pantofel Kulit Pria", userName: "Bapak Heru", rating: 5, comment: "Cocok untuk kerja, kualitas kulitnya bagus.", date: new Date().toISOString() }
         ];
 
         function renderFeatured() {
-            const featured = products.slice(0, 6);
+            const featured = products.slice(0, 12);
             const grid = document.getElementById('featuredProducts');
             if (grid) {
                 grid.innerHTML = featured.map(p => `
                     <div class="product-card rounded-2xl p-4 cursor-pointer" onclick="openProductModal(${p.id})">
                         <div class="product-img-placeholder w-full h-28 rounded-xl mb-3 flex items-center justify-center" style="background: ${p.imageColor}">
-                            <i class="fas fa-shoe-prints text-white/20 text-4xl"></i>
+                            <i class="fas ${getIconByCategory(p.category)} text-white/20 text-4xl"></i>
                         </div>
                         <h4 class="font-semibold text-sm">${p.name}</h4>
                         <p class="text-white/50 text-xs mt-1">${p.priceFormatted}</p>
