@@ -1465,7 +1465,7 @@
             playSound('thankyou');
             
             setTimeout(() => {
-                const utterance = new SpeechSynthesisUtterance("Terima kasih sudah memesan di StreetSole! Pesanan Anda akan segera diproses.");
+                const utterance = new SpeechSynthesisUtterance("Terima kasih sudah memesan di StreetSol! Pesanan Anda akan segera diproses.");
                 utterance.lang = 'id-ID';
                 window.speechSynthesis.speak(utterance);
             }, 500);
