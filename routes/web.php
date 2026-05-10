@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('index');
@@ -10,21 +13,15 @@ Route::get('/login', function () {
     return view('login');
 })->name('login');
 
-Route::get('/dashboard/{role?}', function ($role = 'pembeli') {
-    // Validasi role hanya admin atau pembeli
-    if (!in_array($role, ['admin', 'pembeli'])) {
-        $role = 'pembeli';
-    }
-    
-    // Tampilkan view yang berbeda berdasarkan role
-    if ($role === 'admin') {
-        return view('dashboard_admin', ['role' => $role]);
-    }
-    
-    return view('dashboard', ['role' => $role]);
-})->name('dashboard');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
-// Tambahkan route logout
-Route::get('/logout', function () {
+Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+
+Route::post('/logout', function () {
+    Auth::logout();
     return redirect()->route('index');
 })->name('logout');
+
+Route::get('/dashboard/{role}', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'role']);
+

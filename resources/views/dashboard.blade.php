@@ -324,18 +324,24 @@
         </nav>
 
         <div class="px-3 pt-4 border-t border-white/5">
-            <div class="flex items-center gap-3 px-3 py-2.5 mb-2">
-                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold">MB</div>
-                <div>
-                    <p class="text-xs font-semibold">Member StreetSole</p>
-                    <p class="text-[10px] text-white/30">Pembeli</p>
-                </div>
-            </div>
-            <a href="#" class="nav-item text-rose-400 hover:text-rose-300 hover:bg-rose-500/10">
-                <span class="nav-icon" style="background: rgba(239,68,68,0.1);"><i class="fas fa-sign-out-alt"></i></span>
-                Logout
-            </a>
+    <div class="flex items-center gap-3 px-3 py-2.5 mb-2">
+        <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold">
+            {{ strtoupper(substr(Auth::user()->first_name ?? 'MB', 0, 2)) }}
         </div>
+        <div>
+            <p class="text-xs font-semibold">{{ Auth::user()->first_name ?? 'Member' }} {{ Auth::user()->last_name ?? 'StreetSole' }}</p>
+            <p class="text-[10px] text-white/30">{{ ucfirst(Auth::user()->role ?? 'pembeli') }}</p>
+        </div>
+    </div>
+    <form action="{{ route('logout') }}" method="POST">
+        @csrf
+        <button type="submit" class="nav-item text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 w-full">
+            <span class="nav-icon" style="background: rgba(239,68,68,0.1);"><i class="fas fa-sign-out-alt"></i></span>
+            Logout
+        </button>
+    </form>
+</div>
+
     </aside>
 
     <main class="flex-1 overflow-y-auto bg-[#050505]">
@@ -506,50 +512,9 @@
             delivered: locationStages.pelanggan
         };
 
-        // PRODUCTS - Lengkap dengan Brand Lokal, Pantofel, Heels, Crocs, dll
-        let products = [
-            // Brand Internasional (Sneakers)
-            { id: 1, name: "Nike Air Force 1", brand: "Nike", category: "sneakers", price: 1200000, priceFormatted: "Rp 1.200.000", rating: 4.9, stock: { "39": 5, "40": 8, "41": 12, "42": 15, "43": 10 }, imageColor: "#1a1a2e", desc: "Ikon jalanan yang tak lekang oleh waktu. Dibuat dengan bahan kulit premium dengan sol yang nyaman untuk aktivitas harian." },
-            { id: 2, name: "Nike Air Max 90", brand: "Nike", category: "sneakers", price: 1650000, priceFormatted: "Rp 1.650.000", rating: 4.8, stock: { "40": 6, "41": 4, "42": 7, "43": 3, "44": 2 }, imageColor: "#2d1b4e", desc: "Teknologi Air Max yang ikonik dengan desain retro modern. Nyaman untuk daily wear." },
-            { id: 3, name: "Adidas Stan Smith", brand: "Adidas", category: "sneakers", price: 980000, priceFormatted: "Rp 980.000", rating: 4.7, stock: { "39": 10, "40": 12, "41": 8, "42": 6, "43": 4 }, imageColor: "#1e3a2f", desc: "Desain timeless, nyaman dipakai seharian. Kulit premium dengan detail logo minimalist." },
-            { id: 4, name: "Adidas Ultraboost", brand: "Adidas", category: "sneakers", price: 2100000, priceFormatted: "Rp 2.100.000", rating: 4.9, stock: { "40": 3, "41": 5, "42": 4, "43": 2 }, imageColor: "#1e2a3a", desc: "Running shoe dengan teknologi Boost terbaik. Responsif dan super nyaman." },
-            { id: 5, name: "New Balance 550", brand: "New Balance", category: "sneakers", price: 1450000, priceFormatted: "Rp 1.450.000", rating: 4.8, stock: { "40": 4, "41": 6, "42": 5, "43": 3, "44": 2 }, imageColor: "#3d2b1f", desc: "Basketball silhouette klasik yang kembali populer. Kombinasi kulit dan suede." },
-            { id: 6, name: "New Balance 327", brand: "New Balance", category: "sneakers", price: 1250000, priceFormatted: "Rp 1.250.000", rating: 4.7, stock: { "38": 7, "39": 5, "40": 6, "41": 4, "42": 3 }, imageColor: "#4a2c2c", desc: "Desain retro futuristik dengan outsole yang agresif. Sangat ringan dan nyaman." },
-            { id: 7, name: "Vans Old Skool", brand: "Vans", category: "sneakers", price: 750000, priceFormatted: "Rp 750.000", rating: 4.6, stock: { "38": 15, "39": 12, "40": 10, "41": 8, "42": 6, "43": 4 }, imageColor: "#2c2c2c", desc: "Classic skate shoe dengan stripe sidewall yang ikonik. Canvas dan suede combo." },
-            { id: 8, name: "Vans Sk8-Hi", brand: "Vans", category: "sneakers", price: 890000, priceFormatted: "Rp 890.000", rating: 4.7, stock: { "39": 8, "40": 7, "41": 5, "42": 4, "43": 3 }, imageColor: "#1a1a2e", desc: "High top sneaker dengan ankle support ekstra. Cocok untuk style streetwear." },
-            { id: 9, name: "Converse Chuck 70", brand: "Converse", category: "sneakers", price: 890000, priceFormatted: "Rp 890.000", rating: 4.5, stock: { "38": 20, "39": 18, "40": 15, "41": 12, "42": 10, "43": 8 }, imageColor: "#2d1b1b", desc: "Premium canvas dengan insole yang lebih nyaman. Desain vintage yang timeless." },
-            { id: 10, name: "Converse Run Star Hike", brand: "Converse", category: "sneakers", price: 1350000, priceFormatted: "Rp 1.350.000", rating: 4.8, stock: { "39": 5, "40": 4, "41": 3, "42": 2 }, imageColor: "#1a3a2a", desc: "Platform lugged sole yang ekstra tebal. Tampilan bold dan unik." },
-            { id: 11, name: "Puma RS-X", brand: "Puma", category: "sneakers", price: 1100000, priceFormatted: "Rp 1.100.000", rating: 4.4, stock: { "40": 6, "41": 5, "42": 4, "43": 3 }, imageColor: "#4a2e1e", desc: "Chunky sneaker dengan mesh dan suede layers. Retro futuristic look." },
-            { id: 12, name: "Puma Suede Classic", brand: "Puma", category: "sneakers", price: 750000, priceFormatted: "Rp 750.000", rating: 4.5, stock: { "38": 12, "39": 10, "40": 8, "41": 6, "42": 5 }, imageColor: "#2e1a2e", desc: "Suede upper dengan formstrip yang ikonik. B-boy style yang legendaris." },
-            
-            // Brand LOKAL - Sneakers
-            { id: 13, name: "Compass Gazelle High", brand: "Lokal", category: "sneakers", price: 450000, priceFormatted: "Rp 450.000", rating: 4.7, stock: { "38": 10, "39": 12, "40": 15, "41": 10, "42": 8, "43": 5 }, imageColor: "#c4a47c", desc: "Sneakers high-top lokal dengan kualitas premium. Desain klasik yang timeless." },
-            { id: 14, name: "Ventela High Top", brand: "Lokal", category: "sneakers", price: 399000, priceFormatted: "Rp 399.000", rating: 4.6, stock: { "38": 15, "39": 18, "40": 20, "41": 15, "42": 12, "43": 8 }, imageColor: "#e8d5b7", desc: "Sneakers khas anak muda Indonesia. Nyaman dipakai sehari-hari." },
-            { id: 15, name: "Patrobas Low Profile", brand: "Lokal", category: "sneakers", price: 289000, priceFormatted: "Rp 289.000", rating: 4.5, stock: { "38": 20, "39": 22, "40": 25, "41": 20, "42": 15, "43": 10 }, imageColor: "#a08c6f", desc: "Sneakers kasual dengan desain minimalis dan harga terjangkau." },
-            { id: 16, name: "Brodo Derby Sneakers", brand: "Lokal", category: "sneakers", price: 599000, priceFormatted: "Rp 599.000", rating: 4.8, stock: { "39": 8, "40": 10, "41": 12, "42": 10, "43": 6 }, imageColor: "#8b7355", desc: "Fusion antara sepatu formal dan sneakers. Cocok untuk gaya smart casual." },
-            
-            // Pantofel / Formal (Lokal)
-            { id: 17, name: "Pantofel Kulit Pria", brand: "Lokal", category: "formal", price: 350000, priceFormatted: "Rp 350.000", rating: 4.4, stock: { "39": 10, "40": 12, "41": 10, "42": 8, "43": 5, "44": 3 }, imageColor: "#5c3a21", desc: "Pantofel kulit sintetis elegan untuk acara formal atau ke kantor. Nyaman dipakai lama." },
-            { id: 18, name: "Oxford Formal Shoes", brand: "Lokal", category: "formal", price: 425000, priceFormatted: "Rp 425.000", rating: 4.5, stock: { "39": 8, "40": 10, "41": 12, "42": 8, "43": 5 }, imageColor: "#4a2a1a", desc: "Sepatu Oxford klasik dengan desain rapi. Cocok untuk meeting dan acara resmi." },
-            { id: 19, name: "Monk Strap Shoes", brand: "Lokal", category: "formal", price: 475000, priceFormatted: "Rp 475.000", rating: 4.6, stock: { "38": 5, "39": 7, "40": 8, "41": 6, "42": 5 }, imageColor: "#6b3a2a", desc: "Model monk strap yang elegan dengan bahan kulit premium. Tampil beda dari yang lain." },
-            { id: 20, name: "Loafers Casual", brand: "Lokal", category: "formal", price: 275000, priceFormatted: "Rp 275.000", rating: 4.3, stock: { "38": 15, "39": 18, "40": 20, "41": 15, "42": 12, "43": 8 }, imageColor: "#d4a373", desc: "Loafers kasual yang bisa dipakai untuk berbagai acara. Simple dan stylish." },
-            
-            // Heels (Lokal)
-            { id: 21, name: "Heels Platform Wanita", brand: "Lokal", category: "heels", price: 320000, priceFormatted: "Rp 320.000", rating: 4.5, stock: { "36": 12, "37": 15, "38": 18, "39": 12, "40": 10 }, imageColor: "#d4af37", desc: "Heels platform dengan desain modern. Nyaman untuk beraktivitas seharian." },
-            { id: 22, name: "Stiletto High Heels", brand: "Lokal", category: "heels", price: 380000, priceFormatted: "Rp 380.000", rating: 4.4, stock: { "36": 8, "37": 10, "38": 12, "39": 8, "40": 6 }, imageColor: "#8b0000", desc: "Stiletto dengan heels tinggi. Elegan untuk pesta atau acara formal." },
-            { id: 23, name: "Wedges Heels", brand: "Lokal", category: "heels", price: 290000, priceFormatted: "Rp 290.000", rating: 4.6, stock: { "36": 10, "37": 12, "38": 15, "39": 10, "40": 8 }, imageColor: "#c2a575", desc: "Wedges yang nyaman untuk dipakai sehari-hari. Tidak bikin pegal." },
-            { id: 24, name: "Kitten Heels", brand: "Lokal", category: "heels", price: 259000, priceFormatted: "Rp 259.000", rating: 4.5, stock: { "36": 15, "37": 18, "38": 20, "39": 15, "40": 12 }, imageColor: "#eba834", desc: "Heels rendah yang feminin dan nyaman. Cocok untuk acara semi formal." },
-            
-            // Crocs (Brand internasional tapi sudah masuk ke Indonesia)
-            { id: 25, name: "Crocs Classic Clog", brand: "Crocs", category: "crocs", price: 399000, priceFormatted: "Rp 399.000", rating: 4.5, stock: { "37": 20, "38": 25, "39": 22, "40": 20, "41": 18, "42": 15, "43": 12 }, imageColor: "#74b9ff", desc: "Sepatu santai yang ringan, nyaman, dan breathable. Bisa dihias dengan Jibbitz™." },
-            { id: 26, name: "Crocs LiteRide Clog", brand: "Crocs", category: "crocs", price: 550000, priceFormatted: "Rp 550.000", rating: 4.7, stock: { "38": 15, "39": 18, "40": 20, "41": 15, "42": 12 }, imageColor: "#e17055", desc: "Teknologi LiteRide™ untuk kenyamanan maksimal. Sol yang super empuk dan ringan." },
-            { id: 27, name: "Crocs Swiftwater Sandal", brand: "Crocs", category: "crocs", price: 325000, priceFormatted: "Rp 325.000", rating: 4.4, stock: { "37": 18, "38": 22, "39": 25, "40": 20, "41": 15, "42": 12 }, imageColor: "#00cec9", desc: "Sandal crocs yang cocok untuk kegiatan air. Anti slip dan cepat kering." },
-            
-            // Sandals / Slide (Lokal)
-            { id: 28, name: "Sandals Slide Premium", brand: "Lokal", category: "sandals", price: 120000, priceFormatted: "Rp 120.000", rating: 4.3, stock: { "38": 25, "39": 30, "40": 35, "41": 25, "42": 20, "43": 15 }, imageColor: "#495057", desc: "Sandals slide dengan EVA foam berkualitas. Ringan dan anti slip untuk penggunaan sehari-hari." },
-            { id: 29, name: "Flip Flops Casual", brand: "Lokal", category: "sandals", price: 85000, priceFormatted: "Rp 85.000", rating: 4.2, stock: { "38": 30, "39": 35, "40": 40, "41": 30, "42": 25, "43": 20 }, imageColor: "#fdcb6e", desc: "Flip flops nyaman untuk santai di rumah atau jalan-jalan santai." },
-            { id: 30, name: "Sport Sandals", brand: "Lokal", category: "sandals", price: 189000, priceFormatted: "Rp 189.000", rating: 4.4, stock: { "39": 15, "40": 18, "41": 20, "42": 15, "43": 12, "44": 10 }, imageColor: "#6c5ce7", desc: "Sandal sport dengan tali pengikat yang kuat. Cocok untuk outdoor activity." }
-        ];
+        // PRODUCTS (dari database) - dipasang oleh Laravel
+        const products = @json($products);
+
 
         let cart = [];
         let orders = JSON.parse(localStorage.getItem('orders') || '[]');

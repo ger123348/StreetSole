@@ -556,46 +556,12 @@
     <div id="toast"><i class="fas fa-check-circle text-emerald-400"></i><span id="toastMsg"></span></div>
 
     <script>
-        // ===== DATA =====
-        let produkData = [
-            { id: 1, nama: 'Nike Air Force 1', brand: 'Nike', kategori: 'sneakers', harga: 1200000, stok: 15, status: 'Aktif' },
-            { id: 2, nama: 'Adidas Stan Smith', brand: 'Adidas', kategori: 'sneakers', harga: 980000, stok: 8, status: 'Aktif' },
-            { id: 3, nama: 'New Balance 550', brand: 'New Balance', kategori: 'sneakers', harga: 1450000, stok: 3, status: 'Aktif' },
-            { id: 4, nama: 'Vans Old Skool', brand: 'Vans', kategori: 'sneakers', harga: 750000, stok: 20, status: 'Aktif' },
-            { id: 5, nama: 'Converse Chuck Taylor', brand: 'Converse', kategori: 'sneakers', harga: 650000, stok: 0, status: 'Nonaktif' },
-            { id: 6, nama: 'Pantofel Kulit Pria', brand: 'Lokal', kategori: 'formal', harga: 890000, stok: 12, status: 'Aktif' },
-            { id: 7, nama: 'Crocs Classic Clog', brand: 'Crocs', kategori: 'sandals', harga: 550000, stok: 25, status: 'Aktif' },
-            { id: 8, nama: 'Puma Suede Classic', brand: 'Puma', kategori: 'sneakers', harga: 880000, stok: 2, status: 'Aktif' },
-        ];
+        // ===== DATA (dari database) =====
+        let produkData = @json($products);
+        let pesananData = @json($orders);
+        let usersData = @json($users);
+        let reviewsData = @json($reviews);
 
-        let pesananData = [
-            { id: '#SS-001', produk: 'Nike Air Force 1', pembeli: 'Rina Dewi', total: 1200000, status: 'Diproses' },
-            { id: '#SS-002', produk: 'Adidas Stan Smith', pembeli: 'Budi Santoso', total: 980000, status: 'Dikirim' },
-            { id: '#SS-003', produk: 'New Balance 550', pembeli: 'Ahmad Fauzi', total: 1450000, status: 'Selesai' },
-            { id: '#SS-004', produk: 'Vans Old Skool', pembeli: 'Sarah M.', total: 750000, status: 'Pending' },
-            { id: '#SS-005', produk: 'Crocs Classic Clog', pembeli: 'Heru Setiawan', total: 550000, status: 'Pending' },
-            { id: '#SS-006', produk: 'Puma Suede Classic', pembeli: 'Dewi Lestari', total: 880000, status: 'Diproses' },
-            { id: '#SS-007', produk: 'Pantofel Kulit Pria', pembeli: 'Agus Pratama', total: 890000, status: 'Selesai' },
-            { id: '#SS-008', produk: 'Converse Chuck Taylor', pembeli: 'Siti Rahayu', total: 650000, status: 'Dikirim' },
-        ];
-
-        let usersData = [
-            { id: 1, nama: 'Admin StreetSole', username: 'admin', email: 'admin@gmail.com', role: 'admin', status: 'Aktif', bergabung: '01 Jan 2026' },
-            { id: 2, nama: 'Gerhana Malik', username: 'gerhana', email: 'ger@gmail.com', role: 'pembeli', status: 'Aktif', bergabung: '05 Jan 2026' },
-            { id: 3, nama: 'Rina Dewi', username: 'rinadewi', email: 'rina@gmail.com', role: 'pembeli', status: 'Aktif', bergabung: '10 Feb 2026' },
-            { id: 4, nama: 'Budi Santoso', username: 'budi99', email: 'budi@gmail.com', role: 'pembeli', status: 'Aktif', bergabung: '14 Feb 2026' },
-            { id: 5, nama: 'Ahmad Fauzi', username: 'ahmadf', email: 'ahmad@gmail.com', role: 'pembeli', status: 'Nonaktif', bergabung: '20 Feb 2026' },
-            { id: 6, nama: 'Sarah M.', username: 'sarahm', email: 'sarah@gmail.com', role: 'pembeli', status: 'Aktif', bergabung: '01 Mar 2026' },
-        ];
-
-        const reviewsData = [
-            { id: 1, produk: 'Nike Air Force 1', user: 'Alex Style', rating: 5, komentar: 'Kualitas luar biasa! Recommended banget untuk sneaker lovers. Pengiriman cepat dan aman.', tanggal: '05 Apr 2026' },
-            { id: 2, produk: 'Adidas Stan Smith', user: 'Rina Dewi', rating: 4, komentar: 'Desain timeless, nyaman dipakai seharian. Cocok untuk daily wear.', tanggal: '06 Apr 2026' },
-            { id: 3, produk: 'Vans Old Skool', user: 'Budi Santoso', rating: 4, komentar: 'Sesuai ekspektasi, bahan berkualitas. Ukuran pas sesuai size chart.', tanggal: '07 Apr 2026' },
-            { id: 4, produk: 'New Balance 550', user: 'Ahmad Fauzi', rating: 5, komentar: 'Sepatu terbaik yang pernah saya beli! Kualitas premium, nyaman untuk aktivitas sehari-hari.', tanggal: '08 Apr 2026' },
-            { id: 5, produk: 'Crocs Classic Clog', user: 'Sarah M.', rating: 3, komentar: 'Cukup nyaman tapi ukurannya agak besar dari ekspektasi. Overall lumayan.', tanggal: '09 Apr 2026' },
-            { id: 6, produk: 'Pantofel Kulit Pria', user: 'Heru S.', rating: 5, komentar: 'Sangat cocok untuk kerja formal, kualitas kulit asli terasa premium.', tanggal: '10 Apr 2026' },
-        ];
 
         let editingPesananId = null;
 
