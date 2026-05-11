@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <style>
         * { font-family: 'Inter', sans-serif; }
         body { background: #000; color: white; }
@@ -238,15 +238,16 @@
         <div class="px-3 pt-4 border-t border-white/5">
             <div class="flex items-center gap-3 px-3 py-2.5 mb-2">
                 <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold">
-                    {{ strtoupper(substr($user->first_name ?? 'AS', 0, 2)) }}
+                    <?php echo e(strtoupper(substr($user->first_name ?? 'AS', 0, 2))); ?>
+
                 </div>
                 <div>
-                    <p class="text-xs font-semibold">{{ $user->first_name ?? 'Admin' }} {{ $user->last_name ?? 'StreetSole' }}</p>
+                    <p class="text-xs font-semibold"><?php echo e($user->first_name ?? 'Admin'); ?> <?php echo e($user->last_name ?? 'StreetSole'); ?></p>
                     <p class="text-[10px] text-white/30">Administrator</p>
                 </div>
             </div>
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
+            <form action="<?php echo e(route('logout')); ?>" method="POST">
+                <?php echo csrf_field(); ?>
                 <button type="submit" class="nav-item text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 w-full">
                     <span class="nav-icon" style="background: rgba(239,68,68,0.1);"><i class="fas fa-sign-out-alt"></i></span>
                     Logout
@@ -272,7 +273,7 @@
                         <p class="text-[10px] uppercase tracking-widest text-white/30">Total Penjualan</p>
                         <i class="fas fa-arrow-trend-up text-emerald-400 text-sm"></i>
                     </div>
-                    <p class="text-xl font-bold">{{ $totalSales ? 'Rp ' . number_format($totalSales, 0, ',', '.') : 'Rp 0' }}</p>
+                    <p class="text-xl font-bold"><?php echo e($totalSales ? 'Rp ' . number_format($totalSales, 0, ',', '.') : 'Rp 0'); ?></p>
                     <p class="text-emerald-400 text-xs mt-1.5 font-medium">+0% bulan ini</p>
                 </div>
                 <div class="stat-card rounded-2xl p-5">
@@ -280,7 +281,7 @@
                         <p class="text-[10px] uppercase tracking-widest text-white/30">Order Pending</p>
                         <i class="fas fa-clock text-amber-400 text-sm"></i>
                     </div>
-                    <p class="text-xl font-bold">{{ $pendingOrders }} Pesanan</p>
+                    <p class="text-xl font-bold"><?php echo e($pendingOrders); ?> Pesanan</p>
                     <p class="text-amber-400 text-xs mt-1.5 font-medium">Perlu diproses</p>
                 </div>
                 <div class="stat-card rounded-2xl p-5">
@@ -288,7 +289,7 @@
                         <p class="text-[10px] uppercase tracking-widest text-white/30">Total Produk</p>
                         <i class="fas fa-box text-white/30 text-sm"></i>
                     </div>
-                    <p class="text-xl font-bold">{{ $totalProducts }} SKU</p>
+                    <p class="text-xl font-bold"><?php echo e($totalProducts); ?> SKU</p>
                     <p class="text-white/30 text-xs mt-1.5">Produk tersedia</p>
                 </div>
                 <div class="stat-card rounded-2xl p-5">
@@ -476,42 +477,46 @@
             </div>
 
             <!-- Reviews List - RENDER LANGSUNG DARI BLADE -->
-            @php
+            <?php
                 $reviewList = isset($reviews) ? $reviews : collect();
-            @endphp
+            ?>
 
-            @if($reviewList->count() > 0)
+            <?php if($reviewList->count() > 0): ?>
                 <div class="grid gap-4">
-                    @foreach($reviewList as $rv)
+                    <?php $__currentLoopData = $reviewList; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $rv): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="font-semibold">
-                                        {{ $rv->user->first_name ?? 'Member' }} 
-                                        {{ $rv->user->last_name ?? '' }}
+                                        <?php echo e($rv->user->first_name ?? 'Member'); ?> 
+                                        <?php echo e($rv->user->last_name ?? ''); ?>
+
                                     </p>
                                     <p class="text-xs text-white/40">
-                                        {{ $rv->created_at ? $rv->created_at->format('d M Y') : '-' }}
+                                        <?php echo e($rv->created_at ? $rv->created_at->format('d M Y') : '-'); ?>
+
                                     </p>
                                 </div>
                                 <div class="text-amber-400 text-sm">
-                                    @for($i = 1; $i <= 5; $i++)
-                                        {{ $i <= $rv->rating ? '★' : '☆' }}
-                                    @endfor
+                                    <?php for($i = 1; $i <= 5; $i++): ?>
+                                        <?php echo e($i <= $rv->rating ? '★' : '☆'); ?>
+
+                                    <?php endfor; ?>
                                 </div>
                             </div>
-                            <p class="mt-2 text-white/80">{{ $rv->comment ?? 'Tidak ada komentar' }}</p>
+                            <p class="mt-2 text-white/80"><?php echo e($rv->comment ?? 'Tidak ada komentar'); ?></p>
                             <p class="text-xs text-white/40 mt-2">
-                                📦 {{ $rv->product->name ?? 'Produk tidak ditemukan' }}
+                                📦 <?php echo e($rv->product->name ?? 'Produk tidak ditemukan'); ?>
+
                             </p>
                         </div>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
-            @else
+            <?php else: ?>
                 <div class="text-center py-10 text-white/40">
                     Belum ada review dari pelanggan
                 </div>
-            @endif
+            <?php endif; ?>
         </div>
     </main>
 
@@ -625,17 +630,17 @@
 
     <script>
         // ===== DATA DARI DATABASE (via Laravel) =====
-        let produkData = @json($products);
-        let pesananData = @json($orders);
-        let usersData = @json($users);
+        let produkData = <?php echo json_encode($products, 15, 512) ?>;
+        let pesananData = <?php echo json_encode($orders, 15, 512) ?>;
+        let usersData = <?php echo json_encode($users, 15, 512) ?>;
         
         // Data ringkasan
-        const totalSales = @json($totalSales);
-        const pendingOrders = @json($pendingOrders);
-        const totalProducts = @json($totalProducts);
+        const totalSales = <?php echo json_encode($totalSales, 15, 512) ?>;
+        const pendingOrders = <?php echo json_encode($pendingOrders, 15, 512) ?>;
+        const totalProducts = <?php echo json_encode($totalProducts, 15, 512) ?>;
         
         // Update stat review dari Blade
-        @php
+        <?php
             $reviewCount = isset($reviews) ? $reviews->count() : 0;
             $totalRating = 0;
             $star5Count = 0;
@@ -646,7 +651,7 @@
                 }
             }
             $avgRating = $reviewCount > 0 ? round($totalRating / $reviewCount, 1) : 0;
-        @endphp
+        ?>
         
         // Update stat cards dengan data real
         document.querySelector('.stat-card:first-child p.text-xl').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(totalSales || 0);
@@ -654,9 +659,9 @@
         document.querySelectorAll('.stat-card')[2].querySelector('p.text-xl').innerText = (totalProducts || 0) + ' SKU';
         
         // Update review stat cards
-        document.getElementById('totalReviewsCount').innerText = {{ $reviewCount }};
-        document.getElementById('avgRating').innerHTML = {{ $avgRating }} + ' ★';
-        document.getElementById('star5Count').innerText = {{ $star5Count }};
+        document.getElementById('totalReviewsCount').innerText = <?php echo e($reviewCount); ?>;
+        document.getElementById('avgRating').innerHTML = <?php echo e($avgRating); ?> + ' ★';
+        document.getElementById('star5Count').innerText = <?php echo e($star5Count); ?>;
 
         let editingPesananId = null;
 
@@ -1067,4 +1072,4 @@
         });
     </script>
 </body>
-</html>
+</html><?php /**PATH C:\xampp\htdocs\StreetSole\resources\views/dashboard_admin.blade.php ENDPATH**/ ?>
