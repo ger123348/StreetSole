@@ -15,6 +15,9 @@ return new class extends Migration
             $table->string('size');
             $table->integer('quantity');
             $table->timestamps();
+            
+            // Unique constraint: satu user hanya bisa 1 produk dengan size yang sama
+            $table->unique(['user_id', 'product_id', 'size']);
         });
     }
 

@@ -9,75 +9,102 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function showLogin()
+    /**
+     * Tampilkan halaman login
+     */
+    public function showLoginForm()
     {
+        if (Auth::check()) {
+            $user = Auth::user();
+            return redirect()->route('dashboard', ['role' => $user->role]);
+        }
         return view('login');
     }
 
+    /**
+     * Tampilkan halaman register
+     */
+    public function showRegisterForm()
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+            return redirect()->route('dashboard', ['role' => $user->role]);
+        }
+        return view('login');
+    }
+
+    /**
+     * Proses login
+     */
     public function login(Request $request)
     {
         $request->validate([
-            'email' => ['required','string'],
-            'password' => ['required','string'],
+            'login' => 'required|string',
+            'password' => 'required|string',
         ]);
 
-        $loginInput = $request->input('email');
-        $password = $request->input('password');
+        // Cek apakah input berupa email atau username
+        $loginField = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
-        $user = User::query()
-            ->where('email', $loginInput)
-            ->orWhere('username', $loginInput)
-            ->first();
+        $credentials = [
+            $loginField => $request->login,
+            'password' => $request->password,
+            'status' => 'aktif' // Hanya user aktif yang bisa login
+        ];
 
-        if (!$user || !Hash::check($password, $user->password)) {
-            return back()->withErrors(['login' => 'Email/username atau password salah']);
+        if (Auth::attempt($credentials, $request->remember)) {
+            $request->session()->regenerate();
+            
+            $user = Auth::user();
+            
+            // Redirect berdasarkan role
+            return redirect()->route('dashboard', ['role' => $user->role]);
         }
 
-        if (($user->status ?? 'aktif') !== 'aktif') {
-            return back()->withErrors(['login' => 'Akun nonaktif']);
-        }
-
-        Auth::login($user);
-
-        return redirect()->route('dashboard', ['role' => $user->role ?? 'pembeli']);
+        return back()->withErrors([
+            'login' => 'Email/Username atau password salah.',
+        ])->onlyInput('login');
     }
 
+    /**
+     * Proses register
+     */
     public function register(Request $request)
     {
         $request->validate([
-            'first_name' => ['required','string','max:255'],
-            'last_name' => ['required','string','max:255'],
-            'email' => ['required','email','max:255','unique:users,email'],
-            'username' => ['required','string','max:255','unique:users,username'],
-            'password' => ['required','string','min:6','max:255'],
-            'role' => ['nullable','in:admin,pembeli'],
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'username' => 'required|string|max:255|unique:users',
+            'password' => 'required|string|min:6|confirmed',
         ]);
-
-        $role = $request->input('role', 'pembeli');
 
         $user = User::create([
-            'name' => trim(($request->input('first_name') ?? '') . ' ' . ($request->input('last_name') ?? '')),
-            'email' => $request->input('email'),
-            'username' => $request->input('username'),
-            'first_name' => $request->input('first_name'),
-            'last_name' => $request->input('last_name'),
-            'role' => $role,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'username' => $request->username,
+            'password' => Hash::make($request->password),
+            'role' => 'pembeli', // Default role pembeli
             'status' => 'aktif',
-            'password' => Hash::make($request->input('password')),
         ]);
 
+        // Auto login setelah register
         Auth::login($user);
 
-        return redirect()->route('dashboard', ['role' => $user->role ?? 'pembeli']);
+        return redirect()->route('dashboard', ['role' => 'pembeli'])
+            ->with('success', 'Pendaftaran berhasil! Selamat datang ' . $user->first_name);
     }
 
+    /**
+     * Proses logout
+     */
     public function logout(Request $request)
     {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
+        
         return redirect()->route('index');
     }
 }
-

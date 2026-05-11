@@ -12,11 +12,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained();
-            $table->string('product_name'); // snapshot
-            $table->string('product_brand'); // snapshot
-            $table->string('product_category'); // snapshot
-            $table->decimal('product_price', 12, 0); // snapshot
-            $table->string('image_color'); // snapshot
+            $table->string('product_name');
+            $table->string('product_brand');
+            $table->string('product_category');
+            $table->decimal('product_price', 12, 0);
+            $table->string('image_color');
             $table->string('size');
             $table->integer('quantity');
             $table->timestamps();

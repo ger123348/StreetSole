@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <style>
         * { font-family: 'Inter', sans-serif; }
         body { background: #000; color: white; }
@@ -103,10 +103,10 @@
         </nav>
         <div class="px-3 pt-4 border-t border-white/5">
             <div class="flex items-center gap-3 px-3 py-2.5 mb-2">
-                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold">{{ strtoupper(substr(Auth::user()->first_name ?? 'MB', 0, 2)) }}</div>
-                <div><p class="text-xs font-semibold">{{ Auth::user()->first_name ?? 'Member' }} {{ Auth::user()->last_name ?? 'StreetSole' }}</p><p class="text-[10px] text-white/30">{{ ucfirst(Auth::user()->role ?? 'pembeli') }}</p></div>
+                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold"><?php echo e(strtoupper(substr(Auth::user()->first_name ?? 'MB', 0, 2))); ?></div>
+                <div><p class="text-xs font-semibold"><?php echo e(Auth::user()->first_name ?? 'Member'); ?> <?php echo e(Auth::user()->last_name ?? 'StreetSole'); ?></p><p class="text-[10px] text-white/30"><?php echo e(ucfirst(Auth::user()->role ?? 'pembeli')); ?></p></div>
             </div>
-            <form action="{{ route('logout') }}" method="POST">@csrf<button type="submit" class="nav-item text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 w-full"><span class="nav-icon" style="background: rgba(239,68,68,0.1);"><i class="fas fa-sign-out-alt"></i></span>Logout</button></form>
+            <form action="<?php echo e(route('logout')); ?>" method="POST"><?php echo csrf_field(); ?><button type="submit" class="nav-item text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 w-full"><span class="nav-icon" style="background: rgba(239,68,68,0.1);"><i class="fas fa-sign-out-alt"></i></span>Logout</button></form>
         </div>
     </aside>
 
@@ -114,7 +114,7 @@
 
         <!-- Homepage Panel -->
         <div id="panel-home" class="content-panel p-8">
-            <div class="mb-8"><h2 class="text-2xl font-bold">Halo, {{ Auth::user()->first_name ?? 'Member' }} 👋</h2><p class="text-white/30 text-sm mt-1">Temukan koleksi eksklusif terbaru untuk kamu.</p></div>
+            <div class="mb-8"><h2 class="text-2xl font-bold">Halo, <?php echo e(Auth::user()->first_name ?? 'Member'); ?> 👋</h2><p class="text-white/30 text-sm mt-1">Temukan koleksi eksklusif terbaru untuk kamu.</p></div>
             <div class="grid grid-cols-3 gap-4 mb-8">
                 <div class="stat-card p-5 rounded-2xl"><p class="text-white/30 text-[10px] uppercase tracking-widest mb-2">Total Belanja</p><p class="text-xl font-bold" id="totalSpent">Rp 0</p></div>
                 <div class="stat-card p-5 rounded-2xl"><p class="text-white/30 text-[10px] uppercase tracking-widest mb-2">Pesanan Selesai</p><p class="text-xl font-bold" id="completedOrders">0</p></div>
@@ -186,7 +186,7 @@
             pelanggan: { lat: -6.9675, lng: 107.6691, name: "Alamat Pelanggan" }
         };
         const trackingStages = { paid: locationStages.gudang, processed: locationStages.perjalanan1, shipped: locationStages.perjalanan2, delivered: locationStages.pelanggan };
-        const products = @json($products);
+        const products = <?php echo json_encode($products, 15, 512) ?>;
         const orderStatuses = [{ key: "paid", label: "Dibayar", icon: "fas fa-credit-card" },{ key: "processed", label: "Diproses", icon: "fas fa-box" },{ key: "shipped", label: "Dikirim", icon: "fas fa-truck" },{ key: "delivered", label: "Terkirim", icon: "fas fa-home" }];
 
         // ==================== VARIABEL ====================
@@ -572,4 +572,4 @@
         fetchReviewsFromDatabase();
     </script>
 </body>
-</html>
+</html><?php /**PATH C:\xampp\htdocs\StreetSole\resources\views/dashboard.blade.php ENDPATH**/ ?>
