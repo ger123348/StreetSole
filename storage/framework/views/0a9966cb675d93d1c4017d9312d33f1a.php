@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <style>
         * { font-family: 'Inter', sans-serif; }
         
@@ -532,12 +532,12 @@
                     <i class="fas fa-search"></i>
                 </button>
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full bg-[#c7a87b] flex items-center justify-center text-xs font-bold text-white">{{ strtoupper(substr(Auth::user()->first_name ?? 'MB', 0, 2)) }}</div>
+                    <div class="w-8 h-8 rounded-full bg-[#c7a87b] flex items-center justify-center text-xs font-bold text-white"><?php echo e(strtoupper(substr(Auth::user()->first_name ?? 'MB', 0, 2))); ?></div>
                     <div class="hidden md:block">
-                        <p class="text-xs font-semibold text-[#3e2a21]">{{ Auth::user()->first_name ?? 'Member' }}</p>
-                        <p class="text-[9px] text-[#b7a07e]">{{ ucfirst(Auth::user()->role ?? 'pembeli') }}</p>
+                        <p class="text-xs font-semibold text-[#3e2a21]"><?php echo e(Auth::user()->first_name ?? 'Member'); ?></p>
+                        <p class="text-[9px] text-[#b7a07e]"><?php echo e(ucfirst(Auth::user()->role ?? 'pembeli')); ?></p>
                     </div>
-                    <form action="{{ route('logout') }}" method="POST" class="inline">@csrf<button type="submit" class="text-[#b7a07e] hover:text-rose-600 text-sm"><i class="fas fa-sign-out-alt"></i></button></form>
+                    <form action="<?php echo e(route('logout')); ?>" method="POST" class="inline"><?php echo csrf_field(); ?><button type="submit" class="text-[#b7a07e] hover:text-rose-600 text-sm"><i class="fas fa-sign-out-alt"></i></button></form>
                 </div>
             </div>
         </div>
@@ -548,7 +548,7 @@
         
         <!-- Homepage Panel -->
         <div id="panel-home" class="content-panel">
-            <div class="mb-8"><h2 class="text-3xl font-bold text-[#3e2a21]">Halo, {{ Auth::user()->first_name ?? 'Member' }} 👋</h2><p class="text-[#b7a07e] text-sm mt-1">Temukan koleksi eksklusif terbaru untuk kamu.</p></div>
+            <div class="mb-8"><h2 class="text-3xl font-bold text-[#3e2a21]">Halo, <?php echo e(Auth::user()->first_name ?? 'Member'); ?> 👋</h2><p class="text-[#b7a07e] text-sm mt-1">Temukan koleksi eksklusif terbaru untuk kamu.</p></div>
             <div class="grid grid-cols-3 gap-5 mb-9">
                 <div class="stat-card p-5"><p class="text-[#b7a07e] text-[10px] uppercase tracking-wider mb-2">Total Belanja</p><p class="text-2xl font-bold text-[#3e2a21]" id="totalSpent">Rp 0</p></div>
                 <div class="stat-card p-5"><p class="text-[#b7a07e] text-[10px] uppercase tracking-wider mb-2">Pesanan Selesai</p><p class="text-2xl font-bold text-[#3e2a21]" id="completedOrders">0</p></div>
@@ -813,7 +813,7 @@
             delivered: { lat: -6.9475, lng: 107.6491, name: "🏠 Telah Sampai di Alamat Tujuan", status: "Terkirim" }
         };
         
-        const products = @json($products);
+        const products = <?php echo json_encode($products, 15, 512) ?>;
         const orderStatuses = [{ key: "paid", label: "Dibayar", icon: "fas fa-credit-card" },{ key: "processed", label: "Diproses", icon: "fas fa-box" },{ key: "shipped", label: "Dikirim", icon: "fas fa-truck" },{ key: "delivered", label: "Terkirim", icon: "fas fa-home" }];
 
         let cart = [];
@@ -1360,4 +1360,4 @@
         document.head.appendChild(style);
     </script>
 </body>
-</html>
+</html><?php /**PATH C:\xampp\htdocs\ebis\StreetSole\resources\views/dashboard.blade.php ENDPATH**/ ?>
