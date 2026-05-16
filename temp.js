@@ -1,254 +1,4 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>StreetSole | Sneaker Market</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <style>
-        * { font-family: 'Inter', sans-serif; }
-        body { background: #000; color: white; }
-        .glass-sidebar { background: rgba(8,8,8,0.95); backdrop-filter: blur(20px); border-right: 1px solid rgba(255,255,255,0.06); }
-        .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 10px; font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.45); transition: all 0.2s ease; cursor: pointer; text-decoration: none; border: 1px solid transparent; }
-        .nav-item:hover { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.05); }
-        .nav-item.active { color: #fff; background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.08); }
-        .nav-item .nav-icon { width: 30px; height: 30px; background: rgba(255,255,255,0.06); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .nav-item.active .nav-icon { background: white; color: black; }
-        .stat-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); transition: all 0.3s ease; }
-        .stat-card:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
-        .content-panel { display: none; }
-        .content-panel.active { display: block; }
-        .product-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); transition: all 0.3s cubic-bezier(0.4,0,0.2,1); cursor: pointer; position: relative; }
-        .product-card:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-4px); background: rgba(255,255,255,0.04); }
-        .badge-lokal { position: absolute; top: 10px; left: 10px; background: linear-gradient(135deg,#f59e0b,#d97706); color: white; font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 20px; z-index: 10; }
-        .badge-international { position: absolute; top: 10px; left: 10px; background: linear-gradient(135deg,#3b82f6,#1d4ed8); color: white; font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 20px; z-index: 10; }
-        .cart-item { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); transition: all 0.3s ease; }
-        .star { color: rgba(255,255,255,0.2); cursor: pointer; font-size: 20px; transition: all 0.15s; }
-        .star.active, .star:hover { color: #f59e0b; transform: scale(1.1); }
-        .field-input { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 14px; color: white; font-size: 13px; outline: none; transition: all 0.2s; }
-        .field-input:focus { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.06); }
-        .search-bar { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px 14px 10px 40px; color: white; font-size: 13px; outline: none; width: 100%; }
-        .search-bar:focus { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.06); }
-        .badge { background: white; color: black; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 99px; }
-        .badge-cart { background: #ef4444; color: white; font-size: 10px; padding: 2px 6px; border-radius: 99px; }
-        .filter-chip { padding: 6px 14px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.15); font-size: 11px; cursor: pointer; transition: all 0.2s; color: rgba(255,255,255,0.5); background: transparent; }
-        .filter-chip:hover, .filter-chip.active { background: white; color: black; border-color: white; transform: scale(1.02); }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes bounce { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
-        .animate-in { animation: fadeIn 0.35s ease forwards; }
-        .bounce { animation: bounce 0.3s ease; }
-        .slide-in { animation: slideIn 0.3s ease; }
-        .pulse { animation: pulse 1s infinite; }
-        #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: rgba(10,10,10,0.95); border: 1px solid rgba(255,255,255,0.15); color: white; padding: 12px 24px; border-radius: 99px; font-size: 13px; font-weight: 500; z-index: 9999; transition: all 0.3s ease; opacity: 0; pointer-events: none; display: flex; align-items: center; gap: 10px; backdrop-filter: blur(12px); }
-        #toast.show { opacity: 1; pointer-events: auto; }
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 10000; justify-content: center; align-items: center; }
-        .modal.active { display: flex; animation: fadeIn 0.3s ease; }
-        .modal-content { background: #0a0a0a; border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; max-width: 900px; width: 90%; max-height: 85vh; overflow-y: auto; animation: slideIn 0.3s ease; }
-        .size-btn { width: 44px; height: 44px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: white; cursor: pointer; transition: all 0.2s; font-size: 13px; }
-        .size-btn:hover, .size-btn.active { background: white; color: black; border-color: white; transform: scale(1.05); }
-        .qty-btn { width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: all 0.2s; }
-        .qty-btn:hover { background: rgba(255,255,255,0.15); transform: scale(1.05); }
-        .payment-method-card { cursor: pointer; transition: all 0.25s cubic-bezier(0.4,0,0.2,1); border: 2px solid rgba(255,255,255,0.08); border-radius: 16px; background: rgba(255,255,255,0.02); padding: 14px 16px; }
-        .payment-method-card:hover { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.04); }
-        .payment-method-card.selected { border-color: white; background: rgba(255,255,255,0.07); transform: scale(1.02); box-shadow: 0 0 0 1px rgba(255,255,255,0.1); }
-        .bank-option { cursor: pointer; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px 14px; background: rgba(255,255,255,0.02); }
-        .bank-option:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); }
-        .bank-option.selected { background: rgba(255,255,255,0.08); border-color: white; }
-        .pay-btn-loading { pointer-events: none; opacity: 0.7; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #111; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        .cart-remove { transition: all 0.2s; }
-        .cart-remove:hover { color: #ef4444; transform: scale(1.1); }
-        .product-img-placeholder { background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%); display: flex; align-items: center; justify-content: center; }
-        .timeline-step { position: relative; flex: 1; text-align: center; }
-        .timeline-step .step-icon { width: 48px; height: 48px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; transition: all 0.3s; }
-        .timeline-step.completed .step-icon { background: #10b981; border-color: #10b981; color: white; }
-        .timeline-step.active .step-icon { border-color: #10b981; animation: pulse 1s infinite; }
-        .timeline-step .step-label { font-size: 10px; color: rgba(255,255,255,0.4); }
-        .timeline-step.completed .step-label, .timeline-step.active .step-label { color: white; }
-        .order-card { transition: all 0.3s; }
-        .order-card:hover { background: rgba(255,255,255,0.04); transform: translateY(-2px); }
-        .confetti { position: fixed; width: 10px; height: 10px; background: gold; position: absolute; animation: fall 3s linear forwards; z-index: 10001; }
-        @keyframes fall { to { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
-        .map-container { height: 250px; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); background: #000; box-shadow: inset 0 0 40px rgba(0,0,0,0.5); }
-        .custom-marker { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .custom-marker:hover { transform: scale(1.15) translateY(-5px) !important; z-index: 1000 !important; }
-        .leaflet-container { background: #000 !important; font-family: 'Inter', sans-serif !important; }
-        .leaflet-bar { border: none !important; box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important; }
-        .leaflet-bar a { background-color: rgba(20,20,20,0.9) !important; color: white !important; border-bottom: 1px solid rgba(255,255,255,0.1) !important; }
-        .leaflet-bar a:hover { background-color: white !important; color: black !important; }
-        .live-track-marker { filter: drop-shadow(0 0 5px #10b981); animation: bounce 1s infinite; }
-        .brand-lokal-tag { background: #f59e0b; color: #000; }
-    </style>
-    <!-- Midtrans JS SDK -->
-    <script type="text/javascript" src="{{ config('midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}" data-client-key="{{ config('midtrans.client_key') }}"></script>
-</head>
-<body class="flex h-screen overflow-hidden">
 
-    <!-- SIDEBAR -->
-    <aside class="w-60 glass-sidebar flex flex-col py-6 flex-shrink-0">
-        <div class="px-5 mb-6">
-            <h1 class="text-lg font-black tracking-tighter">STREETSOLE</h1>
-            <div class="flex items-center gap-2 mt-1.5">
-                <span class="badge">MEMBER</span>
-                <span class="text-[10px] text-white/30 font-medium">Premium Member</span>
-            </div>
-        </div>
-        <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
-            <p class="section-label text-[9px] uppercase tracking-widest text-white/20 px-2 mb-2">Utama</p>
-            <a href="#" class="nav-item active" data-panel="home" onclick="switchPanel(this, 'home')"><span class="nav-icon"><i class="fas fa-home"></i></span>Homepage</a>
-            <a href="#" class="nav-item" data-panel="search" onclick="switchPanel(this, 'search')"><span class="nav-icon"><i class="fas fa-search"></i></span>Filter & Search</a>
-            <p class="section-label text-[9px] uppercase tracking-widest text-white/20 px-2 mt-4 mb-2">Transaksi</p>
-            <a href="#" class="nav-item" data-panel="cart" onclick="switchPanel(this, 'cart')"><span class="nav-icon"><i class="fas fa-shopping-cart"></i></span>Keranjang Belanja<span class="ml-auto" id="cartBadge">0</span></a>
-            <a href="#" class="nav-item" data-panel="orders" onclick="switchPanel(this, 'orders')"><span class="nav-icon"><i class="fas fa-truck"></i></span>Pesanan Saya</a>
-            <p class="section-label text-[9px] uppercase tracking-widest text-white/20 px-2 mt-4 mb-2">Komunitas</p>
-            <a href="#" class="nav-item" data-panel="review" onclick="switchPanel(this, 'review')"><span class="nav-icon"><i class="fas fa-star"></i></span>Rating & Review</a>
-            <p class="section-label text-[9px] uppercase tracking-widest text-white/20 px-2 mt-4 mb-2">Pengaturan</p>
-            <a href="#" class="nav-item" data-panel="addresses" onclick="switchPanel(this, 'addresses')"><span class="nav-icon"><i class="fas fa-map-marker-alt"></i></span>Alamat Saya</a>
-        </nav>
-        <div class="px-3 pt-4 border-t border-white/5">
-            <div class="flex items-center gap-3 px-3 py-2.5 mb-2">
-                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold">{{ strtoupper(substr(Auth::user()->first_name ?? 'MB', 0, 2)) }}</div>
-                <div><p class="text-xs font-semibold">{{ Auth::user()->first_name ?? 'Member' }} {{ Auth::user()->last_name ?? 'StreetSole' }}</p><p class="text-[10px] text-white/30">{{ ucfirst(Auth::user()->role ?? 'pembeli') }}</p></div>
-            </div>
-            <form action="{{ route('logout') }}" method="POST">@csrf<button type="submit" class="nav-item text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 w-full"><span class="nav-icon" style="background: rgba(239,68,68,0.1);"><i class="fas fa-sign-out-alt"></i></span>Logout</button></form>
-        </div>
-    </aside>
-
-    <main class="flex-1 overflow-y-auto bg-[#050505]">
-
-        <!-- Homepage Panel -->
-        <div id="panel-home" class="content-panel active p-8">
-            <div class="mb-8"><h2 class="text-2xl font-bold">Halo, {{ Auth::user()->first_name ?? 'Member' }} 👋</h2><p class="text-white/30 text-sm mt-1">Temukan koleksi eksklusif terbaru untuk kamu.</p></div>
-            <div class="grid grid-cols-3 gap-4 mb-8">
-                <div class="stat-card p-5 rounded-2xl"><p class="text-white/30 text-[10px] uppercase tracking-widest mb-2">Total Belanja</p><p class="text-xl font-bold" id="totalSpent">Rp 0</p></div>
-                <div class="stat-card p-5 rounded-2xl"><p class="text-white/30 text-[10px] uppercase tracking-widest mb-2">Pesanan Selesai</p><p class="text-xl font-bold" id="completedOrders">0</p></div>
-                <div class="stat-card p-5 rounded-2xl"><p class="text-white/30 text-[10px] uppercase tracking-widest mb-2">Status Akun</p><p class="text-xl font-bold text-emerald-400">Verified</p></div>
-            </div>
-            <div class="flex items-center justify-between mb-4"><h3 class="font-semibold text-sm">Koleksi Unggulan</h3><button onclick="switchPanel(document.querySelector('[data-panel=search]'), 'search')" class="text-xs text-white/30 hover:text-white transition">Lihat semua →</button></div>
-            <div class="grid grid-cols-2 lg:grid-cols-3 gap-4" id="featuredProducts"></div>
-        </div>
-
-        <!-- Search & Filter Panel -->
-        <div id="panel-search" class="content-panel p-8">
-            <div class="mb-6"><h2 class="text-2xl font-bold">Filter & Search</h2><p class="text-white/30 text-sm mt-1">Temukan sneaker yang kamu inginkan</p></div>
-            <div class="relative mb-6"><i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-white/30 text-sm"></i><input type="text" id="searchInput" placeholder="Cari produk, brand, atau model..." class="search-bar" oninput="filterProducts()"></div>
-            <div>
-                <p class="text-[10px] uppercase tracking-widest text-white/30 mb-3">Tipe Brand</p>
-                <div class="flex flex-wrap gap-2 mb-5" id="typeFilters"><button class="filter-chip active" data-type="all" onclick="setTypeFilter('all')">Semua Brand</button><button class="filter-chip" data-type="lokal" onclick="setTypeFilter('lokal')">🇮🇩 Brand Lokal</button><button class="filter-chip" data-type="internasional" onclick="setTypeFilter('internasional')">🌍 Brand Internasional</button></div>
-                <p class="text-[10px] uppercase tracking-widest text-white/30 mb-3">Brand</p><div class="flex flex-wrap gap-2 mb-5" id="brandFilters"><button class="filter-chip active" data-brand="all" onclick="setBrandFilter('all')">Semua</button></div>
-                <p class="text-[10px] uppercase tracking-widest text-white/30 mb-3">Kategori</p>
-                <div class="flex flex-wrap gap-2 mb-5" id="categoryFilters"><button class="filter-chip active" data-category="all" onclick="setCategoryFilter('all')">Semua</button><button class="filter-chip" data-category="sneakers" onclick="setCategoryFilter('sneakers')">Sneakers</button><button class="filter-chip" data-category="formal" onclick="setCategoryFilter('formal')">Formal/Pantofel</button><button class="filter-chip" data-category="heels" onclick="setCategoryFilter('heels')">Heels</button><button class="filter-chip" data-category="sandals" onclick="setCategoryFilter('sandals')">Sandals/Slide</button><button class="filter-chip" data-category="crocs" onclick="setCategoryFilter('crocs')">Crocs</button></div>
-                <p class="text-[10px] uppercase tracking-widest text-white/30 mb-3">Harga</p>
-                <div class="flex flex-wrap gap-2 mb-5" id="priceFilters"><button class="filter-chip active" data-price="all" onclick="setPriceFilter('all')">Semua</button><button class="filter-chip" data-price="under200" onclick="setPriceFilter('under200')">< Rp 200K</button><button class="filter-chip" data-price="200to500" onclick="setPriceFilter('200to500')">Rp 200K – 500K</button><button class="filter-chip" data-price="500to1000" onclick="setPriceFilter('500to1000')">Rp 500K – 1JT</button><button class="filter-chip" data-price="above1000" onclick="setPriceFilter('above1000')">> Rp 1JT</button></div>
-            </div>
-            <div class="mt-6"><p class="text-xs text-white/30 mb-4" id="resultCount">Menampilkan 0 produk</p><div class="grid grid-cols-2 lg:grid-cols-3 gap-4" id="productGrid"></div></div>
-        </div>
-
-        <!-- Cart Panel -->
-        <div id="panel-cart" class="content-panel p-8"><div class="mb-6"><h2 class="text-2xl font-bold">Keranjang Belanja</h2><p class="text-white/30 text-sm mt-1">Review produk sebelum checkout</p></div><div id="cartContent"></div></div>
-
-        <!-- Orders Panel -->
-        <div id="panel-orders" class="content-panel p-8"><div class="mb-6"><h2 class="text-2xl font-bold">Pesanan Saya</h2><p class="text-white/30 text-sm mt-1">Lacak status pesanan Anda</p></div><div id="ordersList"></div></div>
-
-        <!-- Tracking Modal -->
-        <div id="trackingModal" class="modal"><div class="modal-content" style="max-width:700px"><div class="sticky top-0 bg-[#0a0a0a] border-b border-white/10 p-5 flex justify-between items-center"><h2 class="text-xl font-bold">Lacak Pesanan Live</h2><button onclick="closeTrackingModal()" class="text-white/40 hover:text-white text-xl">&times;</button></div><div class="p-6" id="trackingContent"></div></div></div>
-
-        <!-- Checkout Modal -->
-        <div id="checkoutModal" class="modal"><div class="modal-content"><div class="sticky top-0 bg-[#0a0a0a] border-b border-white/10 p-5 flex justify-between items-center"><h2 class="text-xl font-bold">Checkout</h2><button onclick="closeCheckoutModal()" class="text-white/40 hover:text-white text-xl">&times;</button></div><div class="p-6" id="checkoutContent"></div></div></div>
-
-        <!-- Address Management Panel -->
-        <div id="panel-addresses" class="content-panel p-8">
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h2 class="text-2xl font-bold">Alamat Saya</h2>
-                    <p class="text-white/30 text-sm mt-1">Kelola daftar alamat pengiriman Anda</p>
-                </div>
-                <button onclick="openAddAddressModal()" class="bg-white text-black px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-white/90 transition shadow-lg shadow-white/5">
-                    <i class="fas fa-plus mr-2"></i>Tambah Alamat
-                </button>
-            </div>
-            <div id="addressManagerList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-        </div>
-
-        <!-- Add/Edit Address Modal -->
-        <div id="addressModal" class="modal">
-            <div class="modal-content" style="max-width:550px">
-                <div class="sticky top-0 bg-[#0a0a0a] border-b border-white/10 p-5 flex justify-between items-center">
-                    <h2 class="text-xl font-bold" id="addrModalTitle">Tambah Alamat Baru</h2>
-                    <button onclick="closeAddressModal()" class="text-white/40 hover:text-white text-xl">&times;</button>
-                </div>
-                <div class="p-6">
-                    <div class="space-y-4">
-                        <div>
-                            <label class="text-[10px] text-white/40 block mb-1 uppercase tracking-widest">Label Alamat</label>
-                            <input type="text" id="addrLabel" class="field-input" placeholder="Contoh: Rumah, Kantor, Kost">
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="text-[10px] text-white/40 block mb-1 uppercase tracking-widest">Nama Depan</label>
-                                <input type="text" id="addrFirstName" class="field-input" placeholder="Alex">
-                            </div>
-                            <div>
-                                <label class="text-[10px] text-white/40 block mb-1 uppercase tracking-widest">Nama Belakang</label>
-                                <input type="text" id="addrLastName" class="field-input" placeholder="Style">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="text-[10px] text-white/40 block mb-1 uppercase tracking-widest">Nomor Telepon</label>
-                            <input type="text" id="addrPhone" class="field-input" placeholder="08123456789">
-                        </div>
-                        <div>
-                            <label class="text-[10px] text-white/40 block mb-1 uppercase tracking-widest">Alamat Lengkap</label>
-                            <textarea id="addrFull" class="field-input resize-none" rows="3" placeholder="Jl. Contoh No. 123..."></textarea>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="text-[10px] text-white/40 block mb-1 uppercase tracking-widest">Kota</label>
-                                <input type="text" id="addrCity" class="field-input" placeholder="Bandar Lampung">
-                            </div>
-                            <div>
-                                <label class="text-[10px] text-white/40 block mb-1 uppercase tracking-widest">Kode Pos</label>
-                                <input type="text" id="addrZip" class="field-input" placeholder="35111">
-                            </div>
-                        </div>
-                        <div class="pt-2">
-                            <div class="flex justify-between items-center mb-2">
-                                <label class="text-[10px] text-white/40 uppercase tracking-widest">📍 Titik Lokasi Peta</label>
-                                <button onclick="locateMe('address')" class="text-[9px] font-bold text-emerald-400 hover:text-emerald-300 transition">
-                                    <i class="fas fa-location-arrow mr-1"></i>Gunakan Lokasi Saat Ini
-                                </button>
-                            </div>
-                            <div id="addressManagerMap" class="map-container" style="height:180px"></div>
-                            <p class="text-[9px] text-white/20 mt-1">*Klik pada peta untuk akurasi pengiriman lebih baik</p>
-                        </div>
-                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:11px; color:rgba(255,255,255,0.4); margin-top:10px;">
-                            <input type="checkbox" id="addrIsDefault" style="width:16px;height:16px;"> Jadikan Alamat Utama
-                        </label>
-                        <button onclick="saveManagedAddress()" class="w-full bg-white text-black py-4 rounded-xl font-bold text-sm mt-4 hover:bg-white/90 transition shadow-lg shadow-white/5">Simpan Alamat</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Rating Panel -->
-        <div id="panel-review" class="content-panel p-8"><div class="mb-6"><h2 class="text-2xl font-bold">Rating & Review</h2><p class="text-white/30 text-sm mt-1">Bagikan pengalaman belanjamu</p></div><div class="space-y-4" id="reviewsList"></div></div>
-    </main>
-
-    <div id="toast"><i class="fas fa-circle-check text-emerald-400"></i><span id="toastMsg"></span></div>
-    <audio id="successSound" preload="auto"><source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3" type="audio/mpeg"></audio>
-    <audio id="thankyouSound" preload="auto"><source src="https://www.soundjay.com/misc/sounds/thank-you-1.mp3" type="audio/mpeg"></audio>
-    <audio id="notificationSound" preload="auto"><source src="https://www.soundjay.com/misc/sounds/bell-notification-1.mp3" type="audio/mpeg"></audio>
-
-    <script>
         // ==================== DATA ====================
         const bankList = [
             { id: "bca", name: "BCA", icon: "fas fa-building", vaNumber: "8810 1234 5678 9012", color: "#0066ae" },
@@ -273,7 +23,7 @@
             pelanggan: { lat: -6.9675, lng: 107.6691, name: "Alamat Pelanggan" }
         };
         const trackingStages = { paid: locationStages.gudang, processed: locationStages.perjalanan1, shipped: locationStages.perjalanan2, delivered: locationStages.pelanggan };
-        const products = @json($products);
+        const products = [];
         const orderStatuses = [{ key: "paid", label: "Dibayar", icon: "fas fa-credit-card" },{ key: "processed", label: "Diproses", icon: "fas fa-box" },{ key: "shipped", label: "Dikirim", icon: "fas fa-truck" },{ key: "delivered", label: "Terkirim", icon: "fas fa-home" }];
 
         // ==================== VARIABEL ====================
@@ -671,7 +421,7 @@
             const opt = document.getElementById('bank-' + bankId);
             if (opt) opt.classList.add('selected');
         }
-        function renderCheckout() { const subtotal = cart.reduce((s,i)=>s+(i.price*i.qty),0); const shipping=25000; const discount=50000; const total=subtotal+shipping-discount; const content=document.getElementById('checkoutContent'); content.innerHTML=`<div class="mb-6"><div class="flex items-center gap-2 mb-4"><div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${checkoutStep>=1?'bg-white text-black':'bg-white/10 text-white/30'}">1</div><div class="h-px flex-1 ${checkoutStep>=2?'bg-white':'bg-white/20'}"></div><div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${checkoutStep>=2?'bg-white text-black':'bg-white/10 text-white/30'}">2</div></div><p class="text-center text-xs text-white/40">${checkoutStep===1?'Alamat Pengiriman (Pilih di Map)':'Konfirmasi Pesanan'}</p></div>${checkoutStep===1?renderStep1():renderStep2(total)}<div class="flex gap-3 mt-6">${checkoutStep>1?`<button onclick="prevCheckoutStep()" class="flex-1 bg-white/5 border border-white/10 py-3 rounded-xl text-sm hover:bg-white/10 transition">Kembali</button>`:''}<button onclick="${checkoutStep===2?'confirmOrder()':'nextCheckoutStep()'}" class="flex-1 bg-white text-black py-3 rounded-xl font-semibold text-sm hover:bg-white/90 transition">${checkoutStep===2?'Bayar Sekarang':'Lanjutkan'}</button></div>`; const modalContent = document.querySelector('#checkoutModal .modal-content'); if(modalContent) modalContent.scrollTo({ top: 0, behavior: 'smooth' }); }
+        function renderCheckout() { const subtotal = cart.reduce((s,i)=>s+(i.price*i.qty),0); const shipping=25000; const discount=50000; const total=subtotal+shipping-discount; const content=document.getElementById('checkoutContent'); content.innerHTML=`<div class="mb-6"><div class="flex items-center gap-2 mb-4"><div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${checkoutStep>=1?'bg-white text-black':'bg-white/10 text-white/30'}">1</div><div class="h-px flex-1 ${checkoutStep>=2?'bg-white':'bg-white/20'}"></div><div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${checkoutStep>=2?'bg-white text-black':'bg-white/10 text-white/30'}">2</div></div><p class="text-center text-xs text-white/40">${checkoutStep===1?'Alamat Pengiriman (Pilih di Map)':'Konfirmasi Pesanan'}</p></div>${checkoutStep===1?renderStep1():renderStep2(total)}<div class="flex gap-3 mt-6">${checkoutStep>1?`<button onclick="prevCheckoutStep()" class="flex-1 bg-white/5 border border-white/10 py-3 rounded-xl text-sm hover:bg-white/10 transition">Kembali</button>`:''}<button onclick="${checkoutStep===2?'confirmOrder()':'nextCheckoutStep()'}" class="flex-1 bg-white text-black py-3 rounded-xl font-semibold text-sm hover:bg-white/90 transition">${checkoutStep===2?'Bayar Sekarang':'Lanjutkan'}</button></div>`; }
         function selectSavedAddress(id) {
             selectedSavedAddress = savedAddresses.find(a => a.id == id) || null;
             showManualForm = false;
@@ -706,8 +456,6 @@
                 wrapper.style.display = 'none';
                 btn.textContent = '+ Alamat Baru';
             }
-            const modalContent = document.querySelector('#checkoutModal .modal-content');
-            if(modalContent) modalContent.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function renderStep1() {
@@ -972,20 +720,7 @@
         }
         function closeReviewModal() { const modal=document.getElementById('reviewOrderModal'); if(modal) modal.remove(); }
 
-        // ==================== FUNGSI RENDER FEATURED & SWITCH PANEL ====================
-        function renderFeatured() { 
-            const featured=products.slice(0,12); 
-            const grid=document.getElementById('featuredProducts'); 
-            if(grid){ 
-                grid.innerHTML=featured.map(p=>{ 
-                    const isLokal=isBrandLokal(p.brand); 
-                    const badgeClass=isLokal?'badge-lokal':'badge-international'; 
-                    const badgeText=isLokal?'🇮🇩 LOKAL':'🌍 INTERNATIONAL'; 
-                    return `<div class="product-card rounded-2xl p-4 cursor-pointer" onclick="openProductModal(${p.id})"><div class="${badgeClass}">${badgeText}</div><div class="product-img-placeholder w-full h-28 rounded-xl mb-3 flex items-center justify-center" style="background:${p.imageColor}"><i class="fas ${getIconByCategory(p.category)} text-white/20 text-4xl"></i></div><h4 class="font-semibold text-sm">${p.name}</h4><p class="text-white/50 text-xs mt-1">${p.priceFormatted}</p></div>`; 
-                }).join(''); 
-            } 
-        }
-
+        
         function switchPanel(el,panelId){ 
             document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); 
             if(el) el.classList.add('active'); 
@@ -1041,6 +776,4 @@
         fetchCartFromDatabase(); fetchOrdersFromDatabase(); fetchReviewsFromDatabase();
         const homeNavItem = document.querySelector('.nav-item[data-panel="home"]');
         if (homeNavItem) switchPanel(homeNavItem, 'home');
-    </script>
-</body>
-</html>
+    
