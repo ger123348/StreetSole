@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <style>
         * { font-family: 'Inter', sans-serif; }
         body { background: #000; color: white; }
@@ -78,18 +78,12 @@
         .order-card:hover { background: rgba(255,255,255,0.04); transform: translateY(-2px); }
         .confetti { position: fixed; width: 10px; height: 10px; background: gold; position: absolute; animation: fall 3s linear forwards; z-index: 10001; }
         @keyframes fall { to { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
-        .map-container { height: 250px; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); background: #000; box-shadow: inset 0 0 40px rgba(0,0,0,0.5); }
-        .custom-marker { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .custom-marker:hover { transform: scale(1.15) translateY(-5px) !important; z-index: 1000 !important; }
-        .leaflet-container { background: #000 !important; font-family: 'Inter', sans-serif !important; }
-        .leaflet-bar { border: none !important; box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important; }
-        .leaflet-bar a { background-color: rgba(20,20,20,0.9) !important; color: white !important; border-bottom: 1px solid rgba(255,255,255,0.1) !important; }
-        .leaflet-bar a:hover { background-color: white !important; color: black !important; }
+        .map-container { height: 250px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
         .live-track-marker { filter: drop-shadow(0 0 5px #10b981); animation: bounce 1s infinite; }
         .brand-lokal-tag { background: #f59e0b; color: #000; }
     </style>
     <!-- Midtrans JS SDK -->
-    <script type="text/javascript" src="{{ config('midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}" data-client-key="{{ config('midtrans.client_key') }}"></script>
+    <script type="text/javascript" src="<?php echo e(config('midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js'); ?>" data-client-key="<?php echo e(config('midtrans.client_key')); ?>"></script>
 </head>
 <body class="flex h-screen overflow-hidden">
 
@@ -104,30 +98,28 @@
         </div>
         <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
             <p class="section-label text-[9px] uppercase tracking-widest text-white/20 px-2 mb-2">Utama</p>
-            <a href="#" class="nav-item active" data-panel="home" onclick="switchPanel(this, 'home')"><span class="nav-icon"><i class="fas fa-home"></i></span>Homepage</a>
-            <a href="#" class="nav-item" data-panel="search" onclick="switchPanel(this, 'search')"><span class="nav-icon"><i class="fas fa-search"></i></span>Filter & Search</a>
+            <a href="#" class="nav-item" data-panel="home" onclick="switchPanel(this, 'home')"><span class="nav-icon"><i class="fas fa-home"></i></span>Homepage</a>
+            <a href="#" class="nav-item active" data-panel="search" onclick="switchPanel(this, 'search')"><span class="nav-icon"><i class="fas fa-search"></i></span>Filter & Search</a>
             <p class="section-label text-[9px] uppercase tracking-widest text-white/20 px-2 mt-4 mb-2">Transaksi</p>
             <a href="#" class="nav-item" data-panel="cart" onclick="switchPanel(this, 'cart')"><span class="nav-icon"><i class="fas fa-shopping-cart"></i></span>Keranjang Belanja<span class="ml-auto" id="cartBadge">0</span></a>
             <a href="#" class="nav-item" data-panel="orders" onclick="switchPanel(this, 'orders')"><span class="nav-icon"><i class="fas fa-truck"></i></span>Pesanan Saya</a>
             <p class="section-label text-[9px] uppercase tracking-widest text-white/20 px-2 mt-4 mb-2">Komunitas</p>
             <a href="#" class="nav-item" data-panel="review" onclick="switchPanel(this, 'review')"><span class="nav-icon"><i class="fas fa-star"></i></span>Rating & Review</a>
-            <p class="section-label text-[9px] uppercase tracking-widest text-white/20 px-2 mt-4 mb-2">Pengaturan</p>
-            <a href="#" class="nav-item" data-panel="addresses" onclick="switchPanel(this, 'addresses')"><span class="nav-icon"><i class="fas fa-map-marker-alt"></i></span>Alamat Saya</a>
         </nav>
         <div class="px-3 pt-4 border-t border-white/5">
             <div class="flex items-center gap-3 px-3 py-2.5 mb-2">
-                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold">{{ strtoupper(substr(Auth::user()->first_name ?? 'MB', 0, 2)) }}</div>
-                <div><p class="text-xs font-semibold">{{ Auth::user()->first_name ?? 'Member' }} {{ Auth::user()->last_name ?? 'StreetSole' }}</p><p class="text-[10px] text-white/30">{{ ucfirst(Auth::user()->role ?? 'pembeli') }}</p></div>
+                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold"><?php echo e(strtoupper(substr(Auth::user()->first_name ?? 'MB', 0, 2))); ?></div>
+                <div><p class="text-xs font-semibold"><?php echo e(Auth::user()->first_name ?? 'Member'); ?> <?php echo e(Auth::user()->last_name ?? 'StreetSole'); ?></p><p class="text-[10px] text-white/30"><?php echo e(ucfirst(Auth::user()->role ?? 'pembeli')); ?></p></div>
             </div>
-            <form action="{{ route('logout') }}" method="POST">@csrf<button type="submit" class="nav-item text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 w-full"><span class="nav-icon" style="background: rgba(239,68,68,0.1);"><i class="fas fa-sign-out-alt"></i></span>Logout</button></form>
+            <form action="<?php echo e(route('logout')); ?>" method="POST"><?php echo csrf_field(); ?><button type="submit" class="nav-item text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 w-full"><span class="nav-icon" style="background: rgba(239,68,68,0.1);"><i class="fas fa-sign-out-alt"></i></span>Logout</button></form>
         </div>
     </aside>
 
     <main class="flex-1 overflow-y-auto bg-[#050505]">
 
         <!-- Homepage Panel -->
-        <div id="panel-home" class="content-panel active p-8">
-            <div class="mb-8"><h2 class="text-2xl font-bold">Halo, {{ Auth::user()->first_name ?? 'Member' }} 👋</h2><p class="text-white/30 text-sm mt-1">Temukan koleksi eksklusif terbaru untuk kamu.</p></div>
+        <div id="panel-home" class="content-panel p-8">
+            <div class="mb-8"><h2 class="text-2xl font-bold">Halo, <?php echo e(Auth::user()->first_name ?? 'Member'); ?> 👋</h2><p class="text-white/30 text-sm mt-1">Temukan koleksi eksklusif terbaru untuk kamu.</p></div>
             <div class="grid grid-cols-3 gap-4 mb-8">
                 <div class="stat-card p-5 rounded-2xl"><p class="text-white/30 text-[10px] uppercase tracking-widest mb-2">Total Belanja</p><p class="text-xl font-bold" id="totalSpent">Rp 0</p></div>
                 <div class="stat-card p-5 rounded-2xl"><p class="text-white/30 text-[10px] uppercase tracking-widest mb-2">Pesanan Selesai</p><p class="text-xl font-bold" id="completedOrders">0</p></div>
@@ -165,80 +157,6 @@
         <!-- Checkout Modal -->
         <div id="checkoutModal" class="modal"><div class="modal-content"><div class="sticky top-0 bg-[#0a0a0a] border-b border-white/10 p-5 flex justify-between items-center"><h2 class="text-xl font-bold">Checkout</h2><button onclick="closeCheckoutModal()" class="text-white/40 hover:text-white text-xl">&times;</button></div><div class="p-6" id="checkoutContent"></div></div></div>
 
-        <!-- Address Management Panel -->
-        <div id="panel-addresses" class="content-panel p-8">
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h2 class="text-2xl font-bold">Alamat Saya</h2>
-                    <p class="text-white/30 text-sm mt-1">Kelola daftar alamat pengiriman Anda</p>
-                </div>
-                <button onclick="openAddAddressModal()" class="bg-white text-black px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-white/90 transition shadow-lg shadow-white/5">
-                    <i class="fas fa-plus mr-2"></i>Tambah Alamat
-                </button>
-            </div>
-            <div id="addressManagerList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-        </div>
-
-        <!-- Add/Edit Address Modal -->
-        <div id="addressModal" class="modal">
-            <div class="modal-content" style="max-width:550px">
-                <div class="sticky top-0 bg-[#0a0a0a] border-b border-white/10 p-5 flex justify-between items-center">
-                    <h2 class="text-xl font-bold" id="addrModalTitle">Tambah Alamat Baru</h2>
-                    <button onclick="closeAddressModal()" class="text-white/40 hover:text-white text-xl">&times;</button>
-                </div>
-                <div class="p-6">
-                    <div class="space-y-4">
-                        <div>
-                            <label class="text-[10px] text-white/40 block mb-1 uppercase tracking-widest">Label Alamat</label>
-                            <input type="text" id="addrLabel" class="field-input" placeholder="Contoh: Rumah, Kantor, Kost">
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="text-[10px] text-white/40 block mb-1 uppercase tracking-widest">Nama Depan</label>
-                                <input type="text" id="addrFirstName" class="field-input" placeholder="Alex">
-                            </div>
-                            <div>
-                                <label class="text-[10px] text-white/40 block mb-1 uppercase tracking-widest">Nama Belakang</label>
-                                <input type="text" id="addrLastName" class="field-input" placeholder="Style">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="text-[10px] text-white/40 block mb-1 uppercase tracking-widest">Nomor Telepon</label>
-                            <input type="text" id="addrPhone" class="field-input" placeholder="08123456789">
-                        </div>
-                        <div>
-                            <label class="text-[10px] text-white/40 block mb-1 uppercase tracking-widest">Alamat Lengkap</label>
-                            <textarea id="addrFull" class="field-input resize-none" rows="3" placeholder="Jl. Contoh No. 123..."></textarea>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="text-[10px] text-white/40 block mb-1 uppercase tracking-widest">Kota</label>
-                                <input type="text" id="addrCity" class="field-input" placeholder="Bandar Lampung">
-                            </div>
-                            <div>
-                                <label class="text-[10px] text-white/40 block mb-1 uppercase tracking-widest">Kode Pos</label>
-                                <input type="text" id="addrZip" class="field-input" placeholder="35111">
-                            </div>
-                        </div>
-                        <div class="pt-2">
-                            <div class="flex justify-between items-center mb-2">
-                                <label class="text-[10px] text-white/40 uppercase tracking-widest">📍 Titik Lokasi Peta</label>
-                                <button onclick="locateMe('address')" class="text-[9px] font-bold text-emerald-400 hover:text-emerald-300 transition">
-                                    <i class="fas fa-location-arrow mr-1"></i>Gunakan Lokasi Saat Ini
-                                </button>
-                            </div>
-                            <div id="addressManagerMap" class="map-container" style="height:180px"></div>
-                            <p class="text-[9px] text-white/20 mt-1">*Klik pada peta untuk akurasi pengiriman lebih baik</p>
-                        </div>
-                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:11px; color:rgba(255,255,255,0.4); margin-top:10px;">
-                            <input type="checkbox" id="addrIsDefault" style="width:16px;height:16px;"> Jadikan Alamat Utama
-                        </label>
-                        <button onclick="saveManagedAddress()" class="w-full bg-white text-black py-4 rounded-xl font-bold text-sm mt-4 hover:bg-white/90 transition shadow-lg shadow-white/5">Simpan Alamat</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Rating Panel -->
         <div id="panel-review" class="content-panel p-8"><div class="mb-6"><h2 class="text-2xl font-bold">Rating & Review</h2><p class="text-white/30 text-sm mt-1">Bagikan pengalaman belanjamu</p></div><div class="space-y-4" id="reviewsList"></div></div>
     </main>
@@ -273,7 +191,7 @@
             pelanggan: { lat: -6.9675, lng: 107.6691, name: "Alamat Pelanggan" }
         };
         const trackingStages = { paid: locationStages.gudang, processed: locationStages.perjalanan1, shipped: locationStages.perjalanan2, delivered: locationStages.pelanggan };
-        const products = @json($products);
+        const products = <?php echo json_encode($products, 15, 512) ?>;
         const orderStatuses = [{ key: "paid", label: "Dibayar", icon: "fas fa-credit-card" },{ key: "processed", label: "Diproses", icon: "fas fa-box" },{ key: "shipped", label: "Dikirim", icon: "fas fa-truck" },{ key: "delivered", label: "Terkirim", icon: "fas fa-home" }];
 
         // ==================== VARIABEL ====================
@@ -283,15 +201,7 @@
         let currentBrand = "all", currentCategory = "all", currentPrice = "all", currentType = "all", currentSearch = "";
         let currentTrackingMap = null, trackingInterval = null;
         let selectedMapLocation = null, addressMap = null, addressMarker = null;
-        let managerMap = null, managerMarker = null;
-        let checkoutStep = 1, selectedPayment = "midtrans", selectedBank = null, shippingData = {};
-        let savedAddresses = [], selectedSavedAddress = null, showManualForm = false;
-
-        function escapeHtml(text) {
-            if (!text) return "";
-            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-            return text.toString().replace(/[&<>"']/g, m => map[m]);
-        }
+        let checkoutStep = 1, selectedPayment = "transfer", selectedBank = null, shippingData = {};
 
         // ==================== FUNGSI CART KE DATABASE ====================
         function fetchCartFromDatabase() {
@@ -426,120 +336,82 @@
         const updateCartQty = updateCartQtyFromDB;
         const removeFromCart = removeFromCartFromDB;
 
-        // ==================== FUNGSI GEOCODING & MAPS ====================
+        // ==================== FUNGSI GEOCODING ====================
         async function geocodeAddress(address, city) {
             const fullAddress = `${address}, ${city}, Indonesia`;
             const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(fullAddress)}&format=json&limit=1`;
             try {
                 const response = await fetch(url);
                 const data = await response.json();
-                if (data && data.length > 0) return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+                if (data && data.length > 0) {
+                    return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+                }
             } catch (error) { console.error('Geocoding error:', error); }
             return null;
         }
 
-        async function reverseGeocode(lat, lng, context = 'checkout') {
+        async function reverseGeocode(lat, lng) {
             const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
             try {
                 const response = await fetch(url);
                 const data = await response.json();
                 if (data && data.display_name) {
-                    const prefix = context === 'manager' ? 'addr' : '';
-                    const addressId = context === 'manager' ? 'addrFull' : 'address';
-                    const cityId = context === 'manager' ? 'addrCity' : 'city';
-                    const zipId = context === 'manager' ? 'addrZip' : 'zip';
-
-                    const addressInput = document.getElementById(addressId);
-                    const cityInput = document.getElementById(cityId);
-                    const zipInput = document.getElementById(zipId);
-
-                    if (addressInput) addressInput.value = data.display_name.split(',').slice(0, 3).join(', ');
-                    if (cityInput) {
-                        const addr = data.address;
-                        cityInput.value = addr.city || addr.town || addr.city_district || addr.county || '';
-                    }
-                    if (zipInput && data.address.postcode) zipInput.value = data.address.postcode;
-                    
-                    showToast("Alamat diperbarui dari koordinat peta!");
+                    const addressInput = document.getElementById('address');
+                    const cityInput = document.getElementById('city');
+                    if (addressInput) addressInput.value = data.display_name.split(',')[0] || data.display_name;
+                    if (cityInput && data.address && data.address.city) cityInput.value = data.address.city;
+                    else if (cityInput && data.address && data.address.town) cityInput.value = data.address.town;
+                    showToast("Alamat otomatis terisi dari peta!");
                 }
             } catch (error) { console.error('Reverse geocoding error:', error); }
         }
 
-        function locateMe(context = 'checkout') {
-            if (!navigator.geolocation) { showToast("Browser tidak mendukung geolokasi", false); return; }
-            showToast("Mencari lokasi Anda...");
-            navigator.geolocation.getCurrentPosition(async (pos) => {
-                const { latitude, longitude } = pos.coords;
-                const location = { lat: latitude, lng: longitude };
-                
-                const mapObj = context === 'manager' ? managerMap : addressMap;
-                const markerObj = context === 'manager' ? managerMarker : addressMarker;
-                
-                if (mapObj && markerObj) {
-                    mapObj.flyTo([latitude, longitude], 16, { animate: true, duration: 1.5 });
-                    markerObj.setLatLng([latitude, longitude]);
-                    selectedMapLocation = location;
-                    reverseGeocode(latitude, longitude, context);
-                }
-            }, () => showToast("Gagal mendapatkan lokasi", false));
-        }
-
-        async function initAddressMap(containerId = 'addressMap', context = 'checkout') {
-            const location = await getCurrentPosition();
-            const mapContainer = document.getElementById(containerId);
-            if (!mapContainer) return;
-
-            // Cleanup existing
-            if (context === 'manager' && managerMap) { managerMap.remove(); managerMap = null; }
-            if (context === 'checkout' && addressMap) { addressMap.remove(); addressMap = null; }
-
-            const map = L.map(containerId, { zoomControl: false }).setView([location.lat, location.lng], 15);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; CartoDB' }).addTo(map);
-            L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-            const sneakerIcon = L.divIcon({
-                html: `<div style="background: white; width: 34px; height: 34px; border-radius: 12px; display: flex; items-center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 2px solid #000;"><i class="fas fa-shoe-prints" style="color: #000; font-size: 16px; margin-top: 7px;"></i></div>`,
-                className: 'custom-marker',
-                iconSize: [34, 34],
-                iconAnchor: [17, 34]
-            });
-
-            const marker = L.marker([location.lat, location.lng], { draggable: true, icon: sneakerIcon }).addTo(map);
-
-            if (context === 'manager') { managerMap = map; managerMarker = marker; }
-            else { addressMap = map; addressMarker = marker; }
-
-            const onUpdate = (latlng) => {
-                selectedMapLocation = { lat: latlng.lat, lng: latlng.lng };
-                reverseGeocode(latlng.lat, latlng.lng, context);
-            };
-
-            marker.on('dragend', (e) => onUpdate(e.target.getLatLng()));
-            map.on('click', (e) => { marker.setLatLng(e.latlng); onUpdate(e.latlng); });
-        }
-
-        function setupAddressFormListener(context = 'checkout') {
-            const addressId = context === 'manager' ? 'addrFull' : 'address';
-            const cityId = context === 'manager' ? 'addrCity' : 'city';
-            const addressInput = document.getElementById(addressId);
-            const cityInput = document.getElementById(cityId);
-
+        function setupAddressFormListener() {
+            const addressInput = document.getElementById('address');
+            const cityInput = document.getElementById('city');
             const updateMapFromAddress = async () => {
-                if (addressInput && addressInput.value && cityInput && cityInput.value && !addressInput.value.includes('📍')) {
+                if (addressInput && addressInput.value && cityInput && cityInput.value) {
                     const location = await geocodeAddress(addressInput.value, cityInput.value);
-                    const mapObj = context === 'manager' ? managerMap : addressMap;
-                    const markerObj = context === 'manager' ? managerMarker : addressMarker;
-                    
-                    if (location && mapObj && markerObj) {
-                        mapObj.flyTo([location.lat, location.lng], 16, { animate: true, duration: 1.5 });
-                        markerObj.setLatLng([location.lat, location.lng]);
+                    if (location && addressMap) {
+                        addressMap.setView([location.lat, location.lng], 14);
+                        addressMarker.setLatLng([location.lat, location.lng]);
                         selectedMapLocation = location;
-                        showToast("Peta diselaraskan dengan alamat!");
+                        showToast("Peta diperbarui sesuai alamat!");
                     }
                 }
             };
             if (addressInput) addressInput.addEventListener('blur', updateMapFromAddress);
             if (cityInput) cityInput.addEventListener('blur', updateMapFromAddress);
+        }
+
+        async function initAddressMap() {
+            const location = await getCurrentPosition();
+            const mapContainer = document.getElementById('addressMap');
+            if (!mapContainer) return;
+            if (addressMap) addressMap.remove();
+            let startLocation = location;
+            const addressInput = document.getElementById('address');
+            const cityInput = document.getElementById('city');
+            if (addressInput && addressInput.value && cityInput && cityInput.value) {
+                const geocodeLocation = await geocodeAddress(addressInput.value, cityInput.value);
+                if (geocodeLocation) { startLocation = geocodeLocation; selectedMapLocation = geocodeLocation; }
+            }
+            addressMap = L.map('addressMap').setView([startLocation.lat, startLocation.lng], 14);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>' }).addTo(addressMap);
+            addressMarker = L.marker([startLocation.lat, startLocation.lng], { draggable: true }).addTo(addressMap);
+            addressMarker.on('dragend', async function(e) {
+                const pos = e.target.getLatLng();
+                selectedMapLocation = { lat: pos.lat, lng: pos.lng };
+                if (addressInput) addressInput.value = `📍 ${pos.lat.toFixed(6)}, ${pos.lng.toFixed(6)} (Pilih dari peta)`;
+                showToast("Lokasi berhasil dipilih dari peta!");
+                reverseGeocode(pos.lat, pos.lng);
+            });
+            addressMap.on('click', function(e) {
+                addressMarker.setLatLng(e.latlng);
+                selectedMapLocation = { lat: e.latlng.lat, lng: e.latlng.lng };
+                if (addressInput) addressInput.value = `📍 ${e.latlng.lat.toFixed(6)}, ${e.latlng.lng.toFixed(6)} (Pilih dari peta)`;
+                reverseGeocode(e.latlng.lat, e.latlng.lng);
+            });
         }
 
         // ==================== FUNGSI DATABASE (ORDERS & REVIEWS) ====================
@@ -595,6 +467,8 @@
             reviewsDiv.innerHTML = `<div class="stat-card rounded-2xl p-6"><h3 class="font-semibold text-sm mb-4">Tulis Ulasan</h3><div class="flex items-center gap-4 mb-4"><div class="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center"><i class="fas fa-shoe-prints text-white/20"></i></div><div><p class="text-sm font-semibold">Belanja dulu yuk!</p><p class="text-xs text-white/30">Beri rating setelah pesanan sampai</p></div></div><button onclick="switchPanel(document.querySelector('[data-panel=search]'), 'search')" class="bg-white text-black px-6 py-2.5 rounded-xl text-xs font-bold hover:bg-white/90 transition">Belanja Sekarang →</button></div><div class="space-y-3 mt-4">${allReviews.slice(0,8).map(r => { const userName = r.user_name || r.userName || 'Member'; const productName = r.product_name || r.productName || 'Produk StreetSole'; const comment = r.comment || 'Produk bagus, pengiriman cepat!'; const rating = r.rating || 0; const date = r.created_at ? new Date(r.created_at).toLocaleDateString('id-ID') : (r.date ? new Date(r.date).toLocaleDateString('id-ID') : '-'); return `<div class="review-card rounded-2xl p-5"><div class="flex items-start justify-between mb-3"><div class="flex items-center gap-3"><div class="w-9 h-9 bg-white/8 rounded-full flex items-center justify-center text-xs font-bold">${(userName.substring(0,2) || 'MB').toUpperCase()}</div><div><p class="text-sm font-semibold">${escapeHtml(userName)}</p><p class="text-xs text-white/30">${date}</p></div></div><div class="flex gap-0.5">${Array(5).fill().map((_,i)=>`<i class="fas fa-star text-xs ${i<rating?'text-amber-400':'text-white/10'}"></i>`).join('')}</div></div><p class="text-xs text-white/30 mb-2">${escapeHtml(productName)}</p><p class="text-sm text-white/60 leading-relaxed">${escapeHtml(comment)}</p></div>`; }).join('')}</div>`;
         }
 
+        function escapeHtml(text) { if (!text) return ''; return String(text).replace(/[&<>]/g, m => { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
+
         // ==================== FUNGSI UTILITY ====================
         function updateCartBadge() { const totalItems = cart.reduce((sum, item) => sum + item.qty, 0); document.getElementById('cartBadge').innerHTML = totalItems > 0 ? `<span class="badge-cart ml-auto">${totalItems}</span>` : "0"; updateTotalSpent(); }
         function updateTotalSpent() { const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0); const spentEl = document.getElementById('totalSpent'); if (spentEl) spentEl.innerHTML = `Rp ${total.toLocaleString('id-ID')}`; const completedEl = document.getElementById('completedOrders'); if (completedEl) completedEl.innerHTML = orders.filter(o => o.status === "delivered").length; }
@@ -627,34 +501,7 @@
         function renderCart() { const cartDiv = document.getElementById('cartContent'); if (!cartDiv) return; if (cart.length === 0) { cartDiv.innerHTML = `<div class="text-center py-16"><i class="fas fa-shopping-cart text-white/20 text-5xl mb-4"></i><p class="text-white/40">Keranjang masih kosong</p></div>`; return; } const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0); const shipping = 25000; const discount = 50000; const total = subtotal + shipping - discount; cartDiv.innerHTML = `<div class="grid md:grid-cols-3 gap-6"><div class="md:col-span-2 space-y-3" id="cartItemsList">${cart.map((item, idx) => `<div class="cart-item rounded-xl p-4 flex items-center gap-4 slide-in" data-idx="${idx}"><div class="w-14 h-14 product-img-placeholder rounded-xl flex items-center justify-center flex-shrink-0" style="background:${item.imageColor}"><i class="fas ${getIconByCategory(item.category)} text-white/15 text-xl"></i></div><div class="flex-1"><p class="text-sm font-semibold">${item.name}</p><p class="text-xs text-white/30">Size ${item.size}</p><p class="text-xs text-white/50 mt-1">${item.priceFormatted}</p></div><div class="flex items-center gap-2 bg-white/5 rounded-xl p-1"><button class="w-7 h-7 flex items-center justify-center hover:bg-white/10 rounded-lg text-xs transition" onclick="updateCartQty(${item.id}, '${item.size}', -1)">−</button><span class="text-xs font-medium w-5 text-center" id="cartQty-${item.id}-${item.size.replace(/ /g, '')}">${item.qty}</span><button class="w-7 h-7 flex items-center justify-center hover:bg-white/10 rounded-lg text-xs transition" onclick="updateCartQty(${item.id}, '${item.size}', 1)">+</button></div><button onclick="removeFromCart(${item.id}, '${item.size}')" class="cart-remove text-white/20 hover:text-rose-400 text-sm transition"><i class="fas fa-trash-alt"></i></button></div>`).join('')}</div><div class="stat-card rounded-2xl p-5 h-fit"><h3 class="font-semibold text-sm mb-4">Ringkasan Order</h3><div class="space-y-2.5 text-sm"><div class="flex justify-between text-white/50"><span>Subtotal (${cart.reduce((s,i)=>s+i.qty,0)} item)</span><span>Rp ${subtotal.toLocaleString('id-ID')}</span></div><div class="flex justify-between text-white/50"><span>Ongkos Kirim</span><span>Rp ${shipping.toLocaleString('id-ID')}</span></div><div class="flex justify-between text-white/50"><span>Diskon Reward</span><span class="text-emerald-400">- Rp ${discount.toLocaleString('id-ID')}</span></div><div class="border-t border-white/8 pt-2.5 flex justify-between font-bold"><span>Total</span><span>Rp ${total.toLocaleString('id-ID')}</span></div></div><button onclick="openCheckout()" class="w-full bg-white text-black py-3 rounded-xl font-semibold text-sm mt-5 hover:bg-white/90 transition">Checkout →</button><button onclick="switchPanel(document.querySelector('[data-panel=search]'), 'search')" class="w-full text-white/30 hover:text-white text-xs mt-3 transition">← Lanjut Belanja</button></div></div>`; }
         
         // ==================== FUNGSI CHECKOUT & ORDER ====================
-        function fetchSavedAddresses(callback) {
-            fetch('/addresses', { headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' } })
-            .then(r => r.json())
-            .then(data => { 
-                savedAddresses = data; 
-                if (callback) callback(); 
-            })
-            .catch(err => { 
-                savedAddresses = []; 
-                if (callback) callback(); 
-            });
-        }
-
-        function openCheckout() {
-            if (cart.length === 0) { showToast('Keranjang masih kosong!', false); return; }
-            const modal = document.getElementById('checkoutModal');
-            checkoutStep = 1; selectedPayment = 'midtrans'; selectedBank = null; selectedMapLocation = null;
-            selectedSavedAddress = null; showManualForm = false;
-            fetchSavedAddresses(() => {
-                // Auto-select default address if exists
-                const def = savedAddresses.find(a => a.is_default) || savedAddresses[0] || null;
-                if (def) { selectedSavedAddress = def; showManualForm = false; }
-                else { showManualForm = true; }
-                renderCheckout();
-                modal.classList.add('active');
-                if (showManualForm) setTimeout(() => { initAddressMap('addressMap', 'checkout'); setupAddressFormListener('checkout'); }, 300);
-            });
-        }
+        function openCheckout() { if (cart.length === 0) { showToast("Keranjang masih kosong!", false); return; } const modal = document.getElementById('checkoutModal'); checkoutStep = 1; selectedPayment = "midtrans"; selectedBank = null; selectedMapLocation = null; renderCheckout(); modal.classList.add('active'); setTimeout(() => { initAddressMap(); setupAddressFormListener(); }, 300); }
         
         function selectPaymentMethod(method) {
             selectedPayment = method;
@@ -671,103 +518,8 @@
             const opt = document.getElementById('bank-' + bankId);
             if (opt) opt.classList.add('selected');
         }
-        function renderCheckout() { const subtotal = cart.reduce((s,i)=>s+(i.price*i.qty),0); const shipping=25000; const discount=50000; const total=subtotal+shipping-discount; const content=document.getElementById('checkoutContent'); content.innerHTML=`<div class="mb-6"><div class="flex items-center gap-2 mb-4"><div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${checkoutStep>=1?'bg-white text-black':'bg-white/10 text-white/30'}">1</div><div class="h-px flex-1 ${checkoutStep>=2?'bg-white':'bg-white/20'}"></div><div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${checkoutStep>=2?'bg-white text-black':'bg-white/10 text-white/30'}">2</div></div><p class="text-center text-xs text-white/40">${checkoutStep===1?'Alamat Pengiriman (Pilih di Map)':'Konfirmasi Pesanan'}</p></div>${checkoutStep===1?renderStep1():renderStep2(total)}<div class="flex gap-3 mt-6">${checkoutStep>1?`<button onclick="prevCheckoutStep()" class="flex-1 bg-white/5 border border-white/10 py-3 rounded-xl text-sm hover:bg-white/10 transition">Kembali</button>`:''}<button onclick="${checkoutStep===2?'confirmOrder()':'nextCheckoutStep()'}" class="flex-1 bg-white text-black py-3 rounded-xl font-semibold text-sm hover:bg-white/90 transition">${checkoutStep===2?'Bayar Sekarang':'Lanjutkan'}</button></div>`; const modalContent = document.querySelector('#checkoutModal .modal-content'); if(modalContent) modalContent.scrollTo({ top: 0, behavior: 'smooth' }); }
-        function selectSavedAddress(id) {
-            selectedSavedAddress = savedAddresses.find(a => a.id == id) || null;
-            showManualForm = false;
-            
-            if (selectedSavedAddress) {
-                selectedMapLocation = (selectedSavedAddress.lat && selectedSavedAddress.lng) 
-                    ? { lat: parseFloat(selectedSavedAddress.lat), lng: parseFloat(selectedSavedAddress.lng) } 
-                    : null;
-            }
-
-            // Update selected state visually
-            document.querySelectorAll('.saved-addr-card').forEach(c => {
-                c.classList.toggle('selected', c.dataset.id == id);
-            });
-            const wrapper = document.getElementById('manualFormWrapper');
-            if (wrapper) wrapper.style.display = 'none';
-            const btn = document.getElementById('addNewAddrBtn');
-            if (btn) btn.textContent = '+ Alamat Baru';
-        }
-
-        function toggleManualForm() {
-            showManualForm = !showManualForm;
-            const wrapper = document.getElementById('manualFormWrapper');
-            const btn = document.getElementById('addNewAddrBtn');
-            if (showManualForm) {
-                wrapper.style.display = 'block';
-                btn.textContent = '− Tutup';
-                selectedSavedAddress = null;
-                document.querySelectorAll('.saved-addr-card').forEach(c => c.classList.remove('selected'));
-                setTimeout(() => { initAddressMap('addressMap', 'checkout'); setupAddressFormListener('checkout'); }, 200);
-            } else {
-                wrapper.style.display = 'none';
-                btn.textContent = '+ Alamat Baru';
-            }
-            const modalContent = document.querySelector('#checkoutModal .modal-content');
-            if(modalContent) modalContent.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function renderStep1() {
-            const addrCards = savedAddresses.length > 0 ? `
-                <div class="space-y-2 mb-4" id="savedAddrList">
-                    ${savedAddresses.map(a => `
-                    <div class="saved-addr-card ${selectedSavedAddress && selectedSavedAddress.id == a.id ? 'selected' : ''}"
-                         data-id="${a.id}"
-                         onclick="selectSavedAddress(${a.id})"
-                         style="cursor:pointer; border:2px solid ${selectedSavedAddress && selectedSavedAddress.id == a.id ? 'white' : 'rgba(255,255,255,0.1)'}; border-radius:14px; padding:12px 14px; background:${selectedSavedAddress && selectedSavedAddress.id == a.id ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.02)'}; transition:all 0.2s; margin-bottom:8px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <div>
-                                <span style="font-size:10px; font-weight:700; background:rgba(255,255,255,0.1); padding:2px 8px; border-radius:99px; margin-right:6px;">${escapeHtml(a.label)}</span>
-                                ${a.is_default ? '<span style="font-size:9px; background:#10b981; color:white; padding:2px 7px; border-radius:99px; font-weight:700;">DEFAULT</span>' : ''}
-                            </div>
-                            <i class="fas fa-${selectedSavedAddress && selectedSavedAddress.id == a.id ? 'check-circle' : 'circle'}" style="color:${selectedSavedAddress && selectedSavedAddress.id == a.id ? 'white' : 'rgba(255,255,255,0.2)'}"></i>
-                        </div>
-                        <p style="font-size:13px; font-weight:600; margin-top:8px;">${escapeHtml(a.first_name)} ${escapeHtml(a.last_name || '')}</p>
-                        <p style="font-size:11px; color:rgba(255,255,255,0.4); margin-top:2px;">${escapeHtml(a.phone)}</p>
-                        <p style="font-size:11px; color:rgba(255,255,255,0.5); margin-top:4px; line-height:1.4;">${escapeHtml(a.address)}, ${escapeHtml(a.city)} ${escapeHtml(a.zip || '')}</p>
-                    </div>`).join('')}
-                </div>
-                <button id="addNewAddrBtn" onclick="toggleManualForm()" style="width:100%; border:1px dashed rgba(255,255,255,0.2); border-radius:12px; padding:10px; font-size:12px; color:rgba(255,255,255,0.5); background:transparent; cursor:pointer; transition:all 0.2s; margin-bottom:12px;" onmouseover="this.style.borderColor='rgba(255,255,255,0.5)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.2)'">+ Alamat Baru</button>
-            ` : '';
-
-            const manualDisplay = (savedAddresses.length === 0 || showManualForm) ? 'block' : 'none';
-
-            return `<div class="space-y-3">
-                <h3 class="font-semibold text-sm">Alamat Pengiriman</h3>
-                ${addrCards}
-                <div id="manualFormWrapper" style="display:${manualDisplay};">
-                    <p class="text-[10px] text-white/30 mb-3 uppercase tracking-widest">${savedAddresses.length > 0 ? 'Atau isi alamat baru' : 'Isi Alamat Pengiriman'}</p>
-                    <div class="space-y-3">
-                        <div class="grid grid-cols-2 gap-3">
-                            <div><label class="text-[10px] text-white/40 block mb-1">Nama Depan</label><input type="text" id="firstName" class="field-input" placeholder="Alex"></div>
-                            <div><label class="text-[10px] text-white/40 block mb-1">Nama Belakang</label><input type="text" id="lastName" class="field-input" placeholder="Style"></div>
-                        </div>
-                        <div><label class="text-[10px] text-white/40 block mb-1">Nomor Telepon</label><input type="text" id="phone" class="field-input" placeholder="08123456789"></div>
-                        <div><label class="text-[10px] text-white/40 block mb-1">Alamat Lengkap</label><textarea id="address" class="field-input resize-none" rows="2" placeholder="Jl. Contoh No. 1"></textarea></div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div><label class="text-[10px] text-white/40 block mb-1">Kota</label><input type="text" id="city" class="field-input" placeholder="Bandar Lampung"></div>
-                            <div><label class="text-[10px] text-white/40 block mb-1">Kode Pos</label><input type="text" id="zip" class="field-input" placeholder="35111"></div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <label class="text-[10px] text-white/40 uppercase tracking-widest">📍 Pilih Lokasi di Peta</label>
-                                <button onclick="locateMe('checkout')" class="text-[9px] font-bold text-emerald-400 hover:text-emerald-300 transition">
-                                    <i class="fas fa-location-arrow mr-1"></i>Gunakan Lokasi Saat Ini
-                                </button>
-                            </div>
-                            <div id="addressMap" class="map-container" style="height:220px"></div>
-                            <p class="text-[10px] text-white/30 mt-1">*Klik atau drag marker untuk menentukan lokasi</p>
-                        </div>
-                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:11px; color:rgba(255,255,255,0.4);">
-                            <input type="checkbox" id="saveNewAddress" style="width:14px;height:14px;"> Simpan sebagai alamat tersimpan
-                        </label>
-                    </div>
-                </div>
-            </div>`;
-        }
+        function renderCheckout() { const subtotal = cart.reduce((s,i)=>s+(i.price*i.qty),0); const shipping=25000; const discount=50000; const total=subtotal+shipping-discount; const content=document.getElementById('checkoutContent'); content.innerHTML=`<div class="mb-6"><div class="flex items-center gap-2 mb-4"><div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${checkoutStep>=1?'bg-white text-black':'bg-white/10 text-white/30'}">1</div><div class="h-px flex-1 ${checkoutStep>=2?'bg-white':'bg-white/20'}"></div><div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${checkoutStep>=2?'bg-white text-black':'bg-white/10 text-white/30'}">2</div></div><p class="text-center text-xs text-white/40">${checkoutStep===1?'Alamat Pengiriman (Pilih di Map)':'Konfirmasi Pesanan'}</p></div>${checkoutStep===1?renderStep1():renderStep2(total)}<div class="flex gap-3 mt-6">${checkoutStep>1?`<button onclick="prevCheckoutStep()" class="flex-1 bg-white/5 border border-white/10 py-3 rounded-xl text-sm hover:bg-white/10 transition">Kembali</button>`:''}<button onclick="${checkoutStep===2?'confirmOrder()':'nextCheckoutStep()'}" class="flex-1 bg-white text-black py-3 rounded-xl font-semibold text-sm hover:bg-white/90 transition">${checkoutStep===2?'Bayar Sekarang':'Lanjutkan'}</button></div>`; }
+        function renderStep1() { return `<div class="space-y-4"><h3 class="font-semibold text-sm">Alamat Pengiriman</h3><div class="grid grid-cols-2 gap-3"><div><label class="text-[10px] text-white/40 block mb-1">Nama Depan</label><input type="text" id="firstName" class="field-input" placeholder="Alex"></div><div><label class="text-[10px] text-white/40 block mb-1">Nama Belakang</label><input type="text" id="lastName" class="field-input" placeholder="Style"></div></div><div><label class="text-[10px] text-white/40 block mb-1">Nomor Telepon</label><input type="text" id="phone" class="field-input" placeholder="08123456789"></div><div><label class="text-[10px] text-white/40 block mb-1">Alamat Lengkap</label><textarea id="address" class="field-input resize-none" rows="2" placeholder="Jl. Contoh No. 1, Bandar Lampung"></textarea></div><div class="grid grid-cols-2 gap-3"><div><label class="text-[10px] text-white/40 block mb-1">Kota</label><input type="text" id="city" class="field-input" placeholder="Bandar Lampung"></div><div><label class="text-[10px] text-white/40 block mb-1">Kode Pos</label><input type="text" id="zip" class="field-input" placeholder="35111"></div></div><div><label class="text-[10px] text-white/40 block mb-2">📍 Pilih Lokasi di Peta</label><div id="addressMap" class="map-container" style="height:250px"></div><p class="text-[10px] text-white/30 mt-2">*Klik atau drag marker untuk menentukan lokasi pengiriman</p></div></div>`; }
         function renderStep2(total) {
             const subtotal = cart.reduce((s,i)=>s+(i.price*i.qty),0);
             return `<div class="space-y-5">
@@ -806,70 +558,24 @@
                 </div>
             </div>`;
         }
-        async function nextCheckoutStep() {
+        function nextCheckoutStep() {
             if (checkoutStep === 1) {
-                if (!showManualForm && selectedSavedAddress) {
-                    shippingData = {
-                        firstName: selectedSavedAddress.first_name,
-                        lastName: selectedSavedAddress.last_name || '',
-                        phone: selectedSavedAddress.phone,
-                        address: selectedSavedAddress.address,
-                        city: selectedSavedAddress.city,
-                        zip: selectedSavedAddress.zip || ''
-                    };
-                    selectedMapLocation = (selectedSavedAddress.lat && selectedSavedAddress.lng) 
-                        ? { lat: parseFloat(selectedSavedAddress.lat), lng: parseFloat(selectedSavedAddress.lng) } 
-                        : null;
-                } else {
-                    const firstName = document.getElementById('firstName')?.value?.trim();
-                    const phone = document.getElementById('phone')?.value?.trim();
-                    const address = document.getElementById('address')?.value?.trim();
-                    const city = document.getElementById('city')?.value?.trim();
-                    
-                    if (!firstName) { showToast('Masukkan nama depan', false); return; }
-                    if (!phone) { showToast('Masukkan nomor telepon', false); return; }
-                    if (!address) { showToast('Masukkan alamat lengkap', false); return; }
-                    if (!city) { showToast('Masukkan kota', false); return; }
-                    
-                    shippingData = {
-                        firstName: firstName,
-                        lastName: document.getElementById('lastName')?.value?.trim() || '',
-                        phone: phone,
-                        address: address,
-                        city: city,
-                        zip: document.getElementById('zip')?.value?.trim() || ''
-                    };
-
-                    // Final check for coordinates if still null
-                    if (!selectedMapLocation) {
-                        const loc = await geocodeAddress(shippingData.address, shippingData.city);
-                        if (loc) selectedMapLocation = loc;
-                    }
-
-                    // Save address if requested
-                    if (document.getElementById('saveNewAddress')?.checked) {
-                        fetch('/addresses', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
-                            },
-                            body: JSON.stringify({
-                                first_name: shippingData.firstName,
-                                last_name: shippingData.lastName,
-                                phone: shippingData.phone,
-                                address: shippingData.address,
-                                city: shippingData.city,
-                                zip: shippingData.zip,
-                                lat: selectedMapLocation?.lat || null,
-                                lng: selectedMapLocation?.lng || null,
-                                label: 'Alamat Checkout'
-                            })
-                        }).then(r => r.json()).then(data => {
-                            if (data.success) fetchSavedAddresses();
-                        });
-                    }
-                }
+                const firstName = document.getElementById('firstName')?.value?.trim();
+                const phone = document.getElementById('phone')?.value?.trim();
+                const address = document.getElementById('address')?.value?.trim();
+                const city = document.getElementById('city')?.value?.trim();
+                if (!firstName) { showToast('Masukkan nama depan', false); return; }
+                if (!phone) { showToast('Masukkan nomor telepon', false); return; }
+                if (!address) { showToast('Masukkan alamat lengkap', false); return; }
+                if (!city) { showToast('Masukkan kota', false); return; }
+                shippingData = {
+                    firstName: firstName,
+                    lastName: document.getElementById('lastName')?.value?.trim() || '',
+                    phone: phone,
+                    address: address,
+                    city: city,
+                    zip: document.getElementById('zip')?.value?.trim() || ''
+                };
             }
             checkoutStep++;
             renderCheckout();
@@ -878,169 +584,139 @@
         function prevCheckoutStep() { checkoutStep--; renderCheckout(); if(checkoutStep===1){ setTimeout(()=>initAddressMap(),200); } }
         
         function confirmOrder() {
+
             const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
             const total = subtotal + 25000 - 50000;
+
+            // Disable tombol bayar agar tidak double-submit
             const payBtn = document.querySelector('#checkoutModal button[onclick="confirmOrder()"]');
             if (payBtn) { payBtn.classList.add('pay-btn-loading'); payBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Memproses...'; }
+
             showToast('Menyimpan pesanan...', false);
+
             fetch('/orders/store', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                },
                 body: JSON.stringify({
-                    subtotal, total, payment_method: selectedPayment, selected_bank: selectedBank?.id || null,
-                    first_name: shippingData.firstName, last_name: shippingData.lastName, phone: shippingData.phone,
-                    address: shippingData.address, city: shippingData.city, zip: shippingData.zip,
-                    lat: selectedMapLocation?.lat || null, lng: selectedMapLocation?.lng || null,
-                    items: cart.map(item => ({ id: item.id, name: item.name, brand: item.brand, category: item.category, price: item.price, imageColor: item.imageColor, size: item.size, qty: item.qty }))
+                    subtotal,
+                    total,
+                    payment_method: selectedPayment,
+                    selected_bank: selectedBank?.id || null,
+                    first_name: shippingData.firstName,
+                    last_name: shippingData.lastName,
+                    phone: shippingData.phone,
+                    address: shippingData.address,
+                    city: shippingData.city,
+                    zip: shippingData.zip,
+                    lat: selectedMapLocation?.lat || null,
+                    lng: selectedMapLocation?.lng || null,
+                    items: cart.map(item => ({
+                        id: item.id,
+                        name: item.name,
+                        brand: item.brand,
+                        category: item.category,
+                        price: item.price,
+                        imageColor: item.imageColor,
+                        size: item.size,
+                        qty: item.qty
+                    }))
                 })
             })
             .then(response => response.json())
             .then(data => {
                 if (payBtn) { payBtn.classList.remove('pay-btn-loading'); payBtn.innerHTML = 'Bayar Sekarang'; }
+
                 if (data.success && data.snap_token) {
-                    if (typeof window.snap === 'undefined') { showToast('❌ Midtrans Snap belum siap. Refresh halaman.', false); return; }
+                    // Tutup modal checkout dulu, baru buka Midtrans Snap
                     closeCheckoutModal();
-                    setTimeout(function() {
-                        window.snap.pay(data.snap_token, {
-                            onSuccess: (res) => { showToast('✅ Pembayaran berhasil!'); processSuccessfulOrder(data.order); },
-                            onPending: (res) => { showToast('⏳ Menunggu pembayaran...'); processSuccessfulOrder(data.order); },
-                            onError: (res) => { showToast('❌ Pembayaran gagal.', false); },
-                            onClose: () => { showToast('Pembayaran belum selesai.', false); fetchOrdersFromDatabase(); switchPanel(null, 'orders'); }
-                        });
-                    }, 300);
-                } else if (data.success) { processSuccessfulOrder(data.order); }
-                else { showToast('❌ ' + (data.message || 'Gagal membuat pesanan'), false); }
+
+                    if (typeof window.snap === 'undefined') {
+                        showToast('❌ Midtrans Snap belum siap. Refresh halaman.', false);
+                        return;
+                    }
+
+                    window.snap.pay(data.snap_token, {
+                        onSuccess: function(result) {
+                            showToast('✅ Pembayaran berhasil!');
+                            processSuccessfulOrder(data.order);
+                        },
+                        onPending: function(result) {
+                            showToast('⏳ Menunggu pembayaran...');
+                            processSuccessfulOrder(data.order);
+                        },
+                        onError: function(result) {
+                            showToast('❌ Pembayaran gagal. Silakan coba lagi.', false);
+                        },
+                        onClose: function() {
+                            showToast('Pembayaran belum diselesaikan.', false);
+                            fetchOrdersFromDatabase();
+                            switchPanel(null, 'orders');
+                        }
+                    });
+                } else if (data.success) {
+                    processSuccessfulOrder(data.order);
+                } else {
+                    showToast('❌ ' + (data.message || 'Gagal membuat pesanan'), false);
+                }
             })
             .catch(err => {
                 if (payBtn) { payBtn.classList.remove('pay-btn-loading'); payBtn.innerHTML = 'Bayar Sekarang'; }
+                console.error('Order error:', err);
                 showToast('❌ Gagal menghubungi server', false);
             });
         }
         
         function processSuccessfulOrder(order) {
+            // Kosongkan cart di database
             fetch('/cart/clear', { method: 'DELETE', headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' } });
-            cart = []; updateCartBadge(); renderCart(); closeCheckoutModal(); createConfetti(); playSound('thankyou');
+            cart = [];
+            updateCartBadge();
+            renderCart();
+            closeCheckoutModal();
+            createConfetti();
+            playSound('thankyou');
             showToast(`✅ Pesanan #${order.order_number} berhasil!`);
-            fetchOrdersFromDatabase(); fetchCartFromDatabase();
+            fetchOrdersFromDatabase();
+            fetchCartFromDatabase();
             setTimeout(() => { switchPanel(null, 'orders'); }, 2000);
         }
         
-        function closeCheckoutModal() { if(addressMap) { try { addressMap.remove(); } catch(e) {} addressMap = null; } const modal=document.getElementById('checkoutModal'); modal.classList.remove('active'); checkoutStep=1; }
+        function closeCheckoutModal() { if(addressMap) addressMap.remove(); const modal=document.getElementById('checkoutModal'); modal.classList.remove('active'); checkoutStep=1; }
         
-        function renderOrders() { 
-            const ordersDiv=document.getElementById('ordersList'); if(!ordersDiv) return; 
-            if(orders.length===0){ ordersDiv.innerHTML=`<div class="text-center py-16"><i class="fas fa-box-open text-white/20 text-5xl mb-4"></i><p class="text-white/40">Belum ada pesanan</p></div>`; return; } 
-            ordersDiv.innerHTML = orders.map(order => `
-                <div class="order-card bg-white/5 rounded-2xl p-5 mb-4 border border-white/10">
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <p class="text-xs text-white/30">Order ID</p>
-                            <p class="font-mono text-sm">${order.order_number}</p>
-                            <p class="text-xs text-white/30 mt-1">${new Date(order.created_at).toLocaleDateString('id-ID')}</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-xs text-white/30">Total</p>
-                            <p class="font-bold">Rp ${order.total.toLocaleString('id-ID')}</p>
-                            <span class="inline-block mt-1 text-[10px] px-2 py-0.5 rounded-full ${getStatusClass(order.status)}">${getStatusLabel(order.status)}</span>
-                        </div>
-                    </div>
-                    <div class="flex gap-3 mt-4">
-                        <button onclick="openTrackingModal('${order.order_number}')" class="flex-1 bg-white/10 hover:bg-white/20 py-2 rounded-xl text-xs transition"><i class="fas fa-map-marker-alt mr-1"></i> Lacak</button>
-                        ${order.status==="delivered" ? `<button onclick="openReviewForOrder('${order.order_number}')" class="flex-1 bg-amber-500/20 text-amber-400 py-2 rounded-xl text-xs">Review</button>` : ''}
-                    </div>
-                </div>`).join(''); 
-        }
-        function getStatusClass(s) { const c={paid:"bg-emerald-500/20 text-emerald-400",processed:"bg-amber-500/20 text-amber-400",shipped:"bg-blue-500/20 text-blue-400",delivered:"bg-emerald-500/20 text-emerald-400"}; return c[s]||"bg-white/20 text-white/50"; }
-        function getStatusLabel(s) { const l={paid:"Dibayar",processed:"Diproses",shipped:"Dikirim",delivered:"Terkirim"}; return l[s]||s; }
+        // ==================== FUNGSI RENDER ORDERS ====================
+        function renderOrders() { const ordersDiv=document.getElementById('ordersList'); if(!ordersDiv) return; if(orders.length===0){ ordersDiv.innerHTML=`<div class="text-center py-16"><i class="fas fa-box-open text-white/20 text-5xl mb-4"></i><p class="text-white/40">Belum ada pesanan</p><button onclick="switchPanel(document.querySelector('[data-panel=search]'), 'search')" class="mt-4 bg-white text-black px-6 py-2 rounded-xl text-sm">Belanja Sekarang</button></div>`; return; } ordersDiv.innerHTML = orders.map(order => `<div class="order-card bg-white/5 rounded-2xl p-5 mb-4 border border-white/10"><div class="flex justify-between items-start mb-4"><div><p class="text-xs text-white/30">Order ID</p><p class="font-mono text-sm">${order.order_number}</p><p class="text-xs text-white/30 mt-1">${new Date(order.created_at).toLocaleDateString('id-ID')}</p></div><div class="text-right"><p class="text-xs text-white/30">Total</p><p class="font-bold">Rp ${order.total.toLocaleString('id-ID')}</p><span class="inline-block mt-1 text-[10px] px-2 py-0.5 rounded-full ${getStatusClass(order.status)}">${getStatusLabel(order.status)}</span></div></div><div class="border-t border-white/10 pt-3">${order.items.slice(0,2).map(item=>`<div class="flex items-center gap-3 text-sm mb-2"><i class="fas ${getIconByCategory(item.product_category)} text-white/20"></i><span>${item.product_name} (${item.size}) x${item.quantity}</span></div>`).join('')}${order.items.length>2?`<p class="text-xs text-white/30">+${order.items.length-2} produk lainnya</p>`:''}</div><div class="flex gap-3 mt-4"><button onclick="openTrackingModal('${order.order_number}')" class="flex-1 bg-white/10 hover:bg-white/20 py-2 rounded-xl text-xs transition"><i class="fas fa-map-marker-alt mr-1"></i> Lacak Pesanan</button>${order.status==="delivered"?`<button onclick="openReviewForOrder('${order.order_number}')" class="flex-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 py-2 rounded-xl text-xs"><i class="fas fa-star mr-1"></i> Beri Rating</button>`:''}</div></div>`).join(''); }
+        function getStatusClass(status) { const classes={paid:"bg-emerald-500/20 text-emerald-400",processed:"bg-amber-500/20 text-amber-400",shipped:"bg-blue-500/20 text-blue-400",delivered:"bg-emerald-500/20 text-emerald-400"}; return classes[status]||"bg-white/20 text-white/50"; }
+        function getStatusLabel(status) { const labels={paid:"Dibayar",processed:"Diproses",shipped:"Dikirim",delivered:"Terkirim"}; return labels[status]||status; }
         
-        function openTrackingModal(orderId) { 
-            const order=orders.find(o=>o.order_number===orderId); if(!order) return; 
-            const modal=document.getElementById('trackingModal'); 
-            const content=document.getElementById('trackingContent'); 
-            content.innerHTML=`<div class="mb-6"><div class="flex justify-between items-center mb-4"><p class="text-xs text-white/30">Order ID: <span class="font-mono text-white">${order.order_number}</span></p><p class="text-xs text-white/30">${new Date(order.created_at).toLocaleDateString('id-ID')}</p></div><div class="mb-4"><p class="text-xs font-semibold mb-2 flex items-center gap-2"><i class="fas fa-map-marked-alt text-emerald-400"></i> Status Pesanan</p><div class="flex justify-between mb-2">${orderStatuses.map((step,idx)=>`<div class="timeline-step text-center flex-1 ${order.status===step.key?'active':''}"><div class="step-icon mx-auto mb-2 w-10 h-10 rounded-full flex items-center justify-center"><i class="${step.icon} text-sm"></i></div><p class="step-label text-xs">${step.label}</p></div>`).join('')}</div></div><div class="bg-white/5 rounded-xl p-4"><p class="text-xs font-semibold mb-2">Alamat Pengiriman</p><p class="text-sm">${order.shipping_first_name} ${order.shipping_last_name}</p><p class="text-xs text-white/40">${order.shipping_address}, ${order.shipping_city}</p></div></div>`; 
-            modal.classList.add('active'); 
-        }
-        function closeTrackingModal() { document.getElementById('trackingModal').classList.remove('active'); }
-
-        function openReviewForOrder(orderId) { 
-            const order=orders.find(o=>o.order_number===orderId); if(!order||order.status!=="delivered") return; 
-            const modal=document.createElement('div'); modal.className='modal'; modal.id='reviewOrderModal'; 
-            modal.innerHTML=`<div class="modal-content" style="max-width:500px"><div class="sticky top-0 bg-[#0a0a0a] border-b border-white/10 p-5 flex justify-between items-center"><h2 class="text-xl font-bold">Beri Rating</h2><button onclick="closeReviewModal()" class="text-white/40 hover:text-white text-xl">&times;</button></div><div class="p-6"><div class="mb-4 text-sm">Order #${order.order_number}</div><div class="mb-4"><div class="flex gap-2" id="reviewStars">${[1,2,3,4,5].map(i=>`<i class="fas fa-star text-2xl star-review" data-star="${i}" style="color:rgba(255,255,255,0.2);cursor:pointer"></i>`).join('')}</div></div><textarea id="reviewComment" class="field-input mb-4" rows="3" placeholder="Ulasan Anda..."></textarea><button onclick="submitOrderReview('${order.order_number}')" class="w-full bg-white text-black py-3 rounded-xl font-semibold text-sm">Kirim</button></div></div>`; 
-            document.body.appendChild(modal); modal.classList.add('active'); 
-            let selectedStar=0; document.querySelectorAll('#reviewStars .star-review').forEach((star,idx)=>{ star.onclick=()=>{ selectedStar=idx+1; document.querySelectorAll('#reviewStars .star-review').forEach((s,i)=>s.style.color=i<selectedStar?'#f59e0b':'rgba(255,255,255,0.2)'); }; });
-            window.currentReviewStar = 0; // reset
-        }
+        // ==================== FUNGSI TRACKING & REVIEW MODAL ====================
+        function openTrackingModal(orderId) { const order=orders.find(o=>o.order_number===orderId); if(!order) return; const modal=document.getElementById('trackingModal'); const content=document.getElementById('trackingContent'); content.innerHTML=`<div class="mb-6"><div class="flex justify-between items-center mb-4"><p class="text-xs text-white/30">Order ID: <span class="font-mono text-white">${order.order_number}</span></p><p class="text-xs text-white/30">${new Date(order.created_at).toLocaleDateString('id-ID')}</p></div><div class="mb-4"><p class="text-xs font-semibold mb-2 flex items-center gap-2"><i class="fas fa-map-marked-alt text-emerald-400"></i> Status Pesanan</p><div class="flex justify-between mb-2">${orderStatuses.map((step,idx)=>`<div class="timeline-step text-center flex-1 ${order.status===step.key?'active':''}"><div class="step-icon mx-auto mb-2 w-10 h-10 rounded-full flex items-center justify-center"><i class="${step.icon} text-sm"></i></div><p class="step-label text-xs">${step.label}</p></div>`).join('')}</div></div><div class="bg-white/5 rounded-xl p-4"><p class="text-xs font-semibold mb-2">Alamat Pengiriman</p><p class="text-sm">${order.shipping_first_name} ${order.shipping_last_name}</p><p class="text-xs text-white/40">${order.shipping_address}, ${order.shipping_city}, ${order.shipping_zip}</p><p class="text-xs text-white/40">Telp: ${order.shipping_phone}</p></div><div class="bg-white/5 rounded-xl p-4 mt-4"><p class="text-xs font-semibold mb-2">Item Pesanan</p>${order.items.map(item=>`<div class="flex justify-between text-sm py-2 border-b border-white/10 last:border-0"><span>${item.product_name} (${item.size}) x${item.quantity}</span><span>Rp ${(item.product_price*item.quantity).toLocaleString('id-ID')}</span></div>`).join('')}</div></div>`; modal.classList.add('active'); }
+        function closeTrackingModal() { const modal=document.getElementById('trackingModal'); modal.classList.remove('active'); }
+        function openReviewForOrder(orderId) { const order=orders.find(o=>o.order_number===orderId); if(!order||order.status!=="delivered") return; const modal=document.createElement('div'); modal.className='modal'; modal.id='reviewOrderModal'; modal.innerHTML=`<div class="modal-content" style="max-width:500px"><div class="sticky top-0 bg-[#0a0a0a] border-b border-white/10 p-5 flex justify-between items-center"><h2 class="text-xl font-bold">Beri Rating & Review</h2><button onclick="closeReviewModal()" class="text-white/40 hover:text-white text-xl">&times;</button></div><div class="p-6"><div class="mb-4"><p class="text-sm font-semibold">Order #${order.order_number}</p><div class="space-y-2 mt-3 max-h-40 overflow-y-auto">${order.items.map(item=>`<div class="flex items-center gap-3 py-2 border-b border-white/10"><i class="fas ${getIconByCategory(item.product_category)} text-white/20"></i><div><p class="text-sm">${item.product_name}</p><p class="text-xs text-white/40">Size ${item.size} x${item.quantity}</p></div></div>`).join('')}</div></div><div class="mb-4"><p class="text-xs text-white/40 mb-2">Rating Produk</p><div class="flex gap-2" id="reviewStars">${[1,2,3,4,5].map(i=>`<i class="fas fa-star text-2xl star-review" data-star="${i}" style="color:rgba(255,255,255,0.2);cursor:pointer"></i>`).join('')}</div></div><div class="mb-4"><p class="text-xs text-white/40 mb-2">Ulasan</p><textarea id="reviewComment" class="field-input resize-none" rows="3" placeholder="Ceritakan pengalamanmu dengan produk ini..."></textarea></div><button onclick="submitOrderReview('${order.order_number}')" class="w-full bg-white text-black py-3 rounded-xl font-semibold text-sm hover:bg-white/90 transition">Kirim Review</button></div></div>`; document.body.appendChild(modal); modal.classList.add('active'); let selectedStar=0; document.querySelectorAll('#reviewStars .star-review').forEach((star,idx)=>{ star.addEventListener('mouseenter',()=>{ document.querySelectorAll('#reviewStars .star-review').forEach((s,i)=>{ s.style.color=i<=idx?'#f59e0b':'rgba(255,255,255,0.2)'; }); }); star.addEventListener('mouseleave',()=>{ document.querySelectorAll('#reviewStars .star-review').forEach((s,i)=>{ s.style.color=i<selectedStar?'#f59e0b':'rgba(255,255,255,0.2)'; }); }); star.addEventListener('click',()=>{ selectedStar=idx+1; document.querySelectorAll('#reviewStars .star-review').forEach((s,i)=>{ s.style.color=i<selectedStar?'#f59e0b':'rgba(255,255,255,0.2)'; }); }); }); }
         function closeReviewModal() { const modal=document.getElementById('reviewOrderModal'); if(modal) modal.remove(); }
-
+        
         // ==================== FUNGSI RENDER FEATURED & SWITCH PANEL ====================
-        function renderFeatured() { 
-            const featured=products.slice(0,12); 
-            const grid=document.getElementById('featuredProducts'); 
-            if(grid){ 
-                grid.innerHTML=featured.map(p=>{ 
-                    const isLokal=isBrandLokal(p.brand); 
-                    const badgeClass=isLokal?'badge-lokal':'badge-international'; 
-                    const badgeText=isLokal?'🇮🇩 LOKAL':'🌍 INTERNATIONAL'; 
-                    return `<div class="product-card rounded-2xl p-4 cursor-pointer" onclick="openProductModal(${p.id})"><div class="${badgeClass}">${badgeText}</div><div class="product-img-placeholder w-full h-28 rounded-xl mb-3 flex items-center justify-center" style="background:${p.imageColor}"><i class="fas ${getIconByCategory(p.category)} text-white/20 text-4xl"></i></div><h4 class="font-semibold text-sm">${p.name}</h4><p class="text-white/50 text-xs mt-1">${p.priceFormatted}</p></div>`; 
-                }).join(''); 
-            } 
-        }
+        function renderFeatured() { const featured=products.slice(0,12); const grid=document.getElementById('featuredProducts'); if(grid){ grid.innerHTML=featured.map(p=>{ const isLokal=isBrandLokal(p.brand); const badgeClass=isLokal?'badge-lokal':'badge-international'; const badgeText=isLokal?'🇮🇩 LOKAL':'🌍 INTERNATIONAL'; return `<div class="product-card rounded-2xl p-4 cursor-pointer" onclick="openProductModal(${p.id})"><div class="${badgeClass}">${badgeText}</div><div class="product-img-placeholder w-full h-28 rounded-xl mb-3 flex items-center justify-center" style="background:${p.imageColor}"><i class="fas ${getIconByCategory(p.category)} text-white/20 text-4xl"></i></div><h4 class="font-semibold text-sm">${p.name}</h4><p class="text-white/50 text-xs mt-1">${p.priceFormatted}</p></div>`; }).join(''); } }
+        function switchPanel(el,panelId){ document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); if(el) el.classList.add('active'); document.querySelectorAll('.content-panel').forEach(p=>p.classList.remove('active')); document.getElementById(`panel-${panelId}`).classList.add('active'); if(panelId==='cart') renderCart(); if(panelId==='search'){ updateBrandFilters(); filterProducts(); } if(panelId==='home') renderFeatured(); if(panelId==='review') renderReviews(); if(panelId==='orders') renderOrders(); }
 
-        function switchPanel(el,panelId){ 
-            document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); 
-            if(el) el.classList.add('active'); 
-            document.querySelectorAll('.content-panel').forEach(p=>p.classList.remove('active')); 
-            document.getElementById(`panel-${panelId}`).classList.add('active'); 
-            if(panelId==='cart') renderCart(); 
-            if(panelId==='search'){ updateBrandFilters(); filterProducts(); }
-            if(panelId==='home') renderFeatured();
-            if(panelId==='review') renderReviews();
-            if(panelId==='orders') renderOrders();
-            if(panelId==='addresses') renderAddresses();
-        }
-
-        function renderAddresses() {
-            const list = document.getElementById('addressManagerList'); if (!list) return;
-            if (savedAddresses.length === 0) { list.innerHTML = `<div class="col-span-full py-16 text-center text-white/30">Belum ada alamat</div>`; return; }
-            list.innerHTML = savedAddresses.map(addr => `<div class="stat-card rounded-2xl p-5 relative border ${addr.is_default ? 'border-white/30 bg-white/5' : 'border-white/10'}"><div class="flex justify-between items-start mb-3"><span class="text-[10px] font-bold px-2 py-0.5 rounded bg-white/10 text-white/60">${escapeHtml(addr.label)}</span>${addr.is_default ? '<span class="text-[9px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">Utama</span>' : ''}</div><p class="font-bold text-sm mb-1">${escapeHtml(addr.first_name)} ${escapeHtml(addr.last_name || '')}</p><p class="text-xs text-white/60">${escapeHtml(addr.address)}, ${escapeHtml(addr.city)}</p><div class="flex gap-2 pt-3 mt-3 border-t border-white/5">${!addr.is_default ? `<button onclick="setAddressDefault(${addr.id})" class="flex-1 text-[10px] py-2 rounded-lg bg-white/5 uppercase">Set Utama</button>` : ''}<button onclick="deleteAddress(${addr.id})" class="w-10 h-10 flex items-center justify-center rounded-lg bg-rose-500/10 text-rose-500"><i class="fas fa-trash-alt text-xs"></i></button></div></div>`).join('');
-        }
-
-        function openAddAddressModal() {
-            ['addrLabel','addrFirstName','addrLastName','addrPhone','addrFull','addrCity','addrZip'].forEach(id=>document.getElementById(id).value='');
-            document.getElementById('addrIsDefault').checked = savedAddresses.length === 0;
-            document.getElementById('addressModal').classList.add('active');
-            setTimeout(() => { initAddressMap('addressManagerMap', 'manager'); setupAddressFormListener('manager'); }, 300);
-        }
-
-        function closeAddressModal() { document.getElementById('addressModal').classList.remove('active'); }
-
-        async function saveManagedAddress() {
-            const data = {
-                label: document.getElementById('addrLabel').value.trim() || 'Rumah',
-                first_name: document.getElementById('addrFirstName').value.trim(),
-                last_name: document.getElementById('addrLastName').value.trim(),
-                phone: document.getElementById('addrPhone').value.trim(),
-                address: document.getElementById('addrFull').value.trim(),
-                city: document.getElementById('addrCity').value.trim(),
-                zip: document.getElementById('addrZip').value.trim(),
-                lat: selectedMapLocation?.lat || null,
-                lng: selectedMapLocation?.lng || null,
-                is_default: document.getElementById('addrIsDefault').checked ? 1 : 0
-            };
-            if (!data.first_name || !data.phone || !data.address) { showToast('Lengkapi data wajib', false); return; }
-            if (!data.lat) { const loc = await geocodeAddress(data.address, data.city); if (loc) { data.lat = loc.lat; data.lng = loc.lng; } }
-            fetch('/addresses', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' }, body: JSON.stringify(data) }).then(r => r.json()).then(res => { if (res.success) { showToast('Alamat disimpan'); closeAddressModal(); fetchSavedAddresses(renderAddresses); } });
-        }
-
-        function deleteAddress(id) { if (!confirm('Hapus?')) return; fetch(`/addresses/${id}`, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' } }).then(r=>r.json()).then(res=>{ if(res.success) fetchSavedAddresses(renderAddresses); }); }
-        function setAddressDefault(id) { fetch(`/addresses/${id}/default`, { method: 'POST', headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' } }).then(r=>r.json()).then(res=>{ if(res.success) fetchSavedAddresses(renderAddresses); }); }
-
+        // ==================== INITIALISASI ====================
         document.querySelectorAll('.nav-item[data-panel]').forEach(el=>{ el.addEventListener('click',function(e){ e.preventDefault(); switchPanel(this,this.dataset.panel); }); });
         document.getElementById('searchInput')?.addEventListener('input',(e)=>{ currentSearch=e.target.value; filterProducts(); });
-        updateBrandFilters(); renderFeatured(); filterProducts(); renderCart(); updateCartBadge(); updateTotalSpent();
-        fetchCartFromDatabase(); fetchOrdersFromDatabase(); fetchReviewsFromDatabase();
-        const homeNavItem = document.querySelector('.nav-item[data-panel="home"]');
-        if (homeNavItem) switchPanel(homeNavItem, 'home');
+
+        updateBrandFilters();
+        renderFeatured();
+        filterProducts();
+        renderCart();
+        renderReviews();
+        renderOrders();
+        updateCartBadge();
+        updateTotalSpent();
+        
+        fetchCartFromDatabase();
+        fetchOrdersFromDatabase();
+        fetchReviewsFromDatabase();
     </script>
 </body>
-</html>
+</html><?php /**PATH D:\Data_Kuliah\Joki\Web\StreetSole\resources\views/dashboard.blade.php ENDPATH**/ ?>

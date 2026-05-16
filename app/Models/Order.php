@@ -24,6 +24,8 @@ class Order extends Model
         'shipping_zip',
         'shipping_lat',
         'shipping_lng',
+        'snap_token',
+        'payment_status',
     ];
 
     protected $casts = [

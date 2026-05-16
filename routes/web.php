@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\UserAddressController;
 
 Route::get('/', function () {
     return view('index');
@@ -48,10 +49,18 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    // Cart routes
+    // Cart routes - /cart/clear must be before /cart/{cartId}
     Route::get('/cart', [CartController::class, 'index']);
     Route::post('/cart/add', [CartController::class, 'store']);
+    Route::delete('/cart/clear', [CartController::class, 'clear']);
     Route::put('/cart/{cartId}', [CartController::class, 'update']);
     Route::delete('/cart/{cartId}', [CartController::class, 'destroy']);
-    Route::delete('/cart/clear', [CartController::class, 'clear']);
+});
+
+// User Address routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/addresses', [UserAddressController::class, 'index']);
+    Route::post('/addresses', [UserAddressController::class, 'store']);
+    Route::delete('/addresses/{id}', [UserAddressController::class, 'destroy']);
+    Route::post('/addresses/{id}/default', [UserAddressController::class, 'setDefault']);
 });
