@@ -267,7 +267,7 @@
             <h1 class="text-2xl font-black tracking-tighter text-[#5c3d2e]">STREETSOLE</h1>
         </div>
         <div class="flex items-center gap-4">
-            <a href="{{ route('login') }}" class="btn-primary text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300">
+            <a href="<?php echo e(route('login')); ?>" class="btn-primary text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300">
                 <i class="fas fa-user mr-2"></i> Login / Register
             </a>
         </div>
@@ -314,7 +314,7 @@
             
             <!-- CTA Buttons -->
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-up delay-300">
-                <a href="{{ route('login') }}" class="btn-primary text-white px-8 py-4 rounded-full text-sm font-bold tracking-wide transition-all duration-300 flex items-center gap-2 group">
+                <a href="<?php echo e(route('login')); ?>" class="btn-primary text-white px-8 py-4 rounded-full text-sm font-bold tracking-wide transition-all duration-300 flex items-center gap-2 group">
                     <span>Jelajahi Koleksi</span>
                     <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                 </a>
@@ -399,7 +399,7 @@
                     <h3 class="text-2xl md:text-3xl font-bold text-[#3e2a21] mt-2">Mulai Perjalanan Gayamu</h3>
                     <p class="text-[#8b7355] mt-2">Dapatkan diskon eksklusif untuk member baru</p>
                 </div>
-                <a href="{{ route('login') }}" class="btn-primary text-white px-8 py-3 rounded-full font-bold transition-all duration-300 flex items-center gap-2 group">
+                <a href="<?php echo e(route('login')); ?>" class="btn-primary text-white px-8 py-3 rounded-full font-bold transition-all duration-300 flex items-center gap-2 group">
                     <span>Daftar Sekarang</span>
                     <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                 </a>
@@ -543,4 +543,4 @@
         });
     </script>
 </body>
-</html>
+</html><?php /**PATH C:\xampp\htdocs\ebis\StreetSole\resources\views/index.blade.php ENDPATH**/ ?>

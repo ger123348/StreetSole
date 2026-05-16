@@ -256,20 +256,27 @@
 
                     <!-- FORM LOGIN (POST ke Laravel) - TIDAK BERUBAH -->
                     <div id="loginFormContainer" class="transition-all duration-400 ease-in-out">
-                        <form action="{{ route('login') }}" method="POST" class="space-y-5" id="loginForm">
-                            @csrf
+                        <form action="<?php echo e(route('login')); ?>" method="POST" class="space-y-5" id="loginForm">
+                            <?php echo csrf_field(); ?>
                             <div class="space-y-4">
                                 <div>
                                     <label class="block text-xs uppercase tracking-wider text-[#b7a07e] mb-2 font-semibold">Email atau Username</label>
                                     <div class="relative">
                                         <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-[#c7a87b] text-sm"></i>
-                                        <input type="text" name="login" value="{{ old('login') }}" required
+                                        <input type="text" name="login" value="<?php echo e(old('login')); ?>" required
                                             class="w-full bg-white border border-[#e8ddce] rounded-xl py-3 pl-11 pr-4 text-[#3e2a21] placeholder:text-[#b7a07e] placeholder:text-sm outline-none focus:border-[#c7a87b] focus:ring-2 focus:ring-[#c7a87b]/10 input-transition"
                                             placeholder="nama@gmail.com" id="loginInput">
                                     </div>
-                                    @error('login')
-                                        <p class="text-rose-600 text-xs mt-1">{{ $message }}</p>
-                                    @enderror
+                                    <?php $__errorArgs = ['login'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <p class="text-rose-600 text-xs mt-1"><?php echo e($message); ?></p>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                                 <div>
                                     <label class="block text-xs uppercase tracking-wider text-[#b7a07e] mb-2 font-semibold">Kata Sandi</label>
@@ -299,18 +306,18 @@
 
                     <!-- FORM REGISTER (POST ke Laravel) - TIDAK BERUBAH -->
                     <div id="registerFormContainer" class="hidden transition-all duration-400 ease-in-out">
-                        <form action="{{ route('register') }}" method="POST" class="space-y-4" id="registerForm">
-                            @csrf
+                        <form action="<?php echo e(route('register')); ?>" method="POST" class="space-y-4" id="registerForm">
+                            <?php echo csrf_field(); ?>
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-xs uppercase tracking-wider text-[#b7a07e] mb-1 font-semibold">Nama Depan</label>
-                                    <input type="text" name="first_name" value="{{ old('first_name') }}" 
+                                    <input type="text" name="first_name" value="<?php echo e(old('first_name')); ?>" 
                                         class="w-full bg-white border border-[#e8ddce] rounded-xl py-2.5 px-3 text-[#3e2a21] placeholder:text-[#b7a07e] outline-none focus:border-[#c7a87b] focus:ring-2 focus:ring-[#c7a87b]/10 input-transition" 
                                         placeholder="Example" required>
                                 </div>
                                 <div>
                                     <label class="block text-xs uppercase tracking-wider text-[#b7a07e] mb-1 font-semibold">Nama Belakang</label>
-                                    <input type="text" name="last_name" value="{{ old('last_name') }}" 
+                                    <input type="text" name="last_name" value="<?php echo e(old('last_name')); ?>" 
                                         class="w-full bg-white border border-[#e8ddce] rounded-xl py-2.5 px-3 text-[#3e2a21] placeholder:text-[#b7a07e] outline-none focus:border-[#c7a87b] focus:ring-2 focus:ring-[#c7a87b]/10 input-transition" 
                                         placeholder="Example" required>
                                 </div>
@@ -319,21 +326,35 @@
                                 <label class="block text-xs uppercase tracking-wider text-[#b7a07e] mb-1 font-semibold">Email</label>
                                 <div class="relative">
                                     <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-[#c7a87b] text-sm"></i>
-                                    <input type="email" name="email" value="{{ old('email') }}" required 
+                                    <input type="email" name="email" value="<?php echo e(old('email')); ?>" required 
                                         class="w-full bg-white border border-[#e8ddce] rounded-xl py-2.5 pl-11 pr-3 text-[#3e2a21] placeholder:text-[#b7a07e] outline-none focus:border-[#c7a87b] focus:ring-2 focus:ring-[#c7a87b]/10 input-transition" 
                                         placeholder="pembeli@example.com">
                                 </div>
-                                @error('email') <p class="text-rose-600 text-xs mt-1">{{ $message }}</p> @enderror
+                                <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <p class="text-rose-600 text-xs mt-1"><?php echo e($message); ?></p> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                             <div>
                                 <label class="block text-xs uppercase tracking-wider text-[#b7a07e] mb-1 font-semibold">Username</label>
                                 <div class="relative">
                                     <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-[#c7a87b] text-sm"></i>
-                                    <input type="text" name="username" value="{{ old('username') }}" required 
+                                    <input type="text" name="username" value="<?php echo e(old('username')); ?>" required 
                                         class="w-full bg-white border border-[#e8ddce] rounded-xl py-2.5 pl-11 pr-3 text-[#3e2a21] placeholder:text-[#b7a07e] outline-none focus:border-[#c7a87b] focus:ring-2 focus:ring-[#c7a87b]/10 input-transition" 
                                         placeholder="street_sole">
                                 </div>
-                                @error('username') <p class="text-rose-600 text-xs mt-1">{{ $message }}</p> @enderror
+                                <?php $__errorArgs = ['username'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <p class="text-rose-600 text-xs mt-1"><?php echo e($message); ?></p> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                             <div>
                                 <label class="block text-xs uppercase tracking-wider text-[#b7a07e] mb-1 font-semibold">Kata Sandi</label>
@@ -346,7 +367,14 @@
                                         <i class="fas fa-eye-slash text-sm"></i>
                                     </button>
                                 </div>
-                                @error('password') <p class="text-rose-600 text-xs mt-1">{{ $message }}</p> @enderror
+                                <?php $__errorArgs = ['password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <p class="text-rose-600 text-xs mt-1"><?php echo e($message); ?></p> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                             <div>
                                 <label class="block text-xs uppercase tracking-wider text-[#b7a07e] mb-1 font-semibold">Konfirmasi Kata Sandi</label>
@@ -483,17 +511,17 @@
         }
 
         // Tampilkan error dari session jika ada (TIDAK BERUBAH)
-        @if(session('error'))
-            showToast('{{ session('error') }}', true);
-        @endif
+        <?php if(session('error')): ?>
+            showToast('<?php echo e(session('error')); ?>', true);
+        <?php endif; ?>
 
-        @if(session('success'))
-            showToast('{{ session('success') }}', false);
-        @endif
+        <?php if(session('success')): ?>
+            showToast('<?php echo e(session('success')); ?>', false);
+        <?php endif; ?>
 
-        @if($errors->any())
-            showToast('{{ $errors->first() }}', true);
-        @endif
+        <?php if($errors->any()): ?>
+            showToast('<?php echo e($errors->first()); ?>', true);
+        <?php endif; ?>
     </script>
 </body>
-</html>
+</html><?php /**PATH C:\xampp\htdocs\ebis\StreetSole\resources\views/login.blade.php ENDPATH**/ ?>

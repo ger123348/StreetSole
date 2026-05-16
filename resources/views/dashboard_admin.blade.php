@@ -3,19 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreetSole | Admin Dashboard</title>
+    <title>StreetSole | Admin Dashboard - Heritage</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         * { font-family: 'Inter', sans-serif; }
-        body { background: #000; color: white; }
+        
+        body { 
+            background: linear-gradient(135deg, #fffcf8 0%, #fef7f0 100%);
+            color: #3e2a21;
+        }
 
+        /* Glass Sidebar Premium */
         .glass-sidebar {
-            background: rgba(8, 8, 8, 0.97);
+            background: rgba(255, 252, 248, 0.98);
             backdrop-filter: blur(20px);
-            border-right: 1px solid rgba(255,255,255,0.06);
+            border-right: 1px solid rgba(199,168,123,0.2);
+            box-shadow: 4px 0 20px rgba(0,0,0,0.02);
         }
 
         .nav-item {
@@ -23,49 +29,56 @@
             align-items: center;
             gap: 12px;
             padding: 10px 14px;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 13px;
             font-weight: 500;
-            color: rgba(255,255,255,0.45);
-            transition: all 0.2s ease;
+            color: #8b7355;
+            transition: all 0.25s ease;
             cursor: pointer;
             text-decoration: none;
             border: 1px solid transparent;
             position: relative;
         }
         .nav-item:hover {
-            color: rgba(255,255,255,0.85);
-            background: rgba(255,255,255,0.05);
+            color: #5c3d2e;
+            background: rgba(199,168,123,0.1);
+            transform: translateX(3px);
         }
         .nav-item.active {
             color: #fff;
-            background: rgba(255,255,255,0.08);
-            border-color: rgba(255,255,255,0.08);
+            background: linear-gradient(135deg, #c7a87b, #b08f64);
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(199,168,123,0.25);
         }
         .nav-item .nav-icon {
             width: 30px;
             height: 30px;
-            background: rgba(255,255,255,0.06);
-            border-radius: 8px;
+            background: rgba(199,168,123,0.12);
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
             font-size: 12px;
+            color: #8b7355;
         }
         .nav-item.active .nav-icon {
             background: white;
-            color: black;
+            color: #b08f64;
         }
 
         .stat-card {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.06);
+            background: white;
+            border: 1px solid #f0e4d5;
+            border-radius: 20px;
             transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
         .stat-card:hover {
-            background: rgba(255,255,255,0.04);
-            border-color: rgba(255,255,255,0.1);
+            background: #fffbf7;
+            border-color: #e0cfbe;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(199,168,123,0.1);
         }
 
         .content-panel { display: none; }
@@ -80,140 +93,220 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
-        .badge-admin { background: white; color: black; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 99px; }
-        .badge-count { background: #ef4444; color: white; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 99px; min-width: 18px; text-align: center; }
+        .badge-admin { 
+            background: linear-gradient(135deg, #c7a87b, #b08f64);
+            color: white; 
+            font-size: 9px; 
+            font-weight: 700; 
+            padding: 2px 8px; 
+            border-radius: 30px; 
+        }
+        .badge-count { 
+            background: #c7a87b;
+            color: white; 
+            font-size: 10px; 
+            font-weight: 700; 
+            padding: 1px 6px; 
+            border-radius: 99px; 
+            min-width: 18px; 
+            text-align: center; 
+        }
 
         .table-row {
-            border-bottom: 1px solid rgba(255,255,255,0.04);
+            border-bottom: 1px solid #f0e4d5;
             transition: background 0.2s;
         }
-        .table-row:hover { background: rgba(255,255,255,0.03); }
+        .table-row:hover { background: rgba(199,168,123,0.04); }
         .table-row:last-child { border-bottom: none; }
 
         .status-badge {
-            padding: 3px 10px;
-            border-radius: 99px;
+            padding: 3px 12px;
+            border-radius: 30px;
             font-size: 10px;
             font-weight: 600;
-            border: 1px solid;
+            border: none;
+            display: inline-block;
         }
-        .status-diproses { color: #60a5fa; border-color: rgba(96,165,250,0.3); background: rgba(96,165,250,0.08); }
-        .status-dikirim { color: #a78bfa; border-color: rgba(167,139,250,0.3); background: rgba(167,139,250,0.08); }
-        .status-selesai { color: #34d399; border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.08); }
-        .status-pending { color: #fbbf24; border-color: rgba(251,191,36,0.3); background: rgba(251,191,36,0.08); }
-        .status-aktif { color: #34d399; border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.08); }
-        .status-nonaktif { color: #f87171; border-color: rgba(248,113,113,0.3); background: rgba(248,113,113,0.08); }
+        .status-diproses { background: rgba(96,165,250,0.12); color: #3b82f6; }
+        .status-dikirim { background: rgba(167,139,250,0.12); color: #8b5cf6; }
+        .status-selesai { background: rgba(52,211,153,0.12); color: #10b981; }
+        .status-pending { background: rgba(251,191,36,0.12); color: #f59e0b; }
+        .status-aktif { background: rgba(52,211,153,0.12); color: #10b981; }
+        .status-nonaktif { background: rgba(248,113,113,0.12); color: #ef4444; }
 
         .field-input {
             width: 100%;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px;
+            background: white;
+            border: 1px solid #e8ddce;
+            border-radius: 12px;
             padding: 9px 13px;
-            color: white;
+            color: #3e2a21;
             font-size: 13px;
             outline: none;
             transition: all 0.2s;
         }
-        .field-input:focus { border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.06); }
-        .field-input option { background: #111; color: white; }
+        .field-input:focus { 
+            border-color: #c7a87b; 
+            box-shadow: 0 0 0 3px rgba(199,168,123,0.12);
+        }
+        .field-input option { background: white; color: #3e2a21; }
 
         .modal-overlay {
             display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.82); backdrop-filter: blur(8px);
+            background: rgba(62,42,33,0.7); backdrop-filter: blur(6px);
             z-index: 10000; justify-content: center; align-items: center;
         }
         .modal-overlay.active { display: flex; }
         .modal-box {
-            background: #0d0d0d; border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px; width: 90%; max-width: 560px; max-height: 85vh;
-            overflow-y: auto; animation: fadeIn 0.25s ease;
+            background: #fffcf8;
+            border: 1px solid #f0e4d5;
+            border-radius: 24px;
+            width: 90%; max-width: 560px; max-height: 85vh;
+            overflow-y: auto;
+            animation: fadeIn 0.25s ease;
+            box-shadow: 0 25px 40px rgba(0,0,0,0.1);
         }
 
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #111; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #f0e4d5; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #c7a87b, #b08f64); border-radius: 10px; }
 
         .action-btn {
-            padding: 5px 12px; border-radius: 8px; font-size: 11px; font-weight: 600;
-            cursor: pointer; transition: all 0.2s; border: 1px solid;
+            padding: 5px 14px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid;
         }
-        .btn-edit { color: #60a5fa; border-color: rgba(96,165,250,0.3); background: rgba(96,165,250,0.06); }
-        .btn-edit:hover { background: rgba(96,165,250,0.15); }
-        .btn-delete { color: #f87171; border-color: rgba(248,113,113,0.3); background: rgba(248,113,113,0.06); }
-        .btn-delete:hover { background: rgba(248,113,113,0.15); }
-        .btn-primary { color: black; background: white; border-color: white; }
-        .btn-primary:hover { background: rgba(255,255,255,0.85); }
+        .btn-edit { 
+            color: #c7a87b; 
+            border-color: rgba(199,168,123,0.3); 
+            background: rgba(199,168,123,0.08); 
+        }
+        .btn-edit:hover { 
+            background: #c7a87b;
+            color: white;
+            border-color: #c7a87b;
+        }
+        .btn-delete { 
+            color: #ef4444; 
+            border-color: rgba(239,68,68,0.3); 
+            background: rgba(239,68,68,0.08); 
+        }
+        .btn-delete:hover { 
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+        .btn-primary { 
+            color: white; 
+            background: #c7a87b; 
+            border-color: #c7a87b; 
+        }
+        .btn-primary:hover { 
+            background: #b08f64;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(199,168,123,0.3);
+        }
 
         .search-admin {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 10px;
+            background: white;
+            border: 1px solid #e8ddce;
+            border-radius: 12px;
             padding: 8px 14px 8px 38px;
-            color: white;
+            color: #3e2a21;
             font-size: 13px;
             outline: none;
+            transition: all 0.2s;
         }
-        .search-admin:focus { border-color: rgba(255,255,255,0.2); }
+        .search-admin:focus { 
+            border-color: #c7a87b;
+            box-shadow: 0 0 0 3px rgba(199,168,123,0.12);
+        }
 
         #toast {
             position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-            background: rgba(10,10,10,0.95); border: 1px solid rgba(255,255,255,0.15);
-            color: white; padding: 12px 24px; border-radius: 99px;
+            background: #3e2a21;
+            border: 1px solid #e8ddce;
+            color: #fdf8f0;
+            padding: 12px 24px; border-radius: 60px;
             font-size: 13px; font-weight: 500; z-index: 9999;
             transition: all 0.3s ease; opacity: 0; pointer-events: none;
             display: flex; align-items: center; gap: 10px;
             backdrop-filter: blur(12px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
-        #toast.show { opacity: 1; pointer-events: auto; }
+        #toast.show { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(-5px); }
 
         .product-color-dot {
             width: 18px; height: 18px; border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.15);
+            border: 2px solid #f0e4d5;
         }
 
         .star-filled { color: #f59e0b; }
-        .star-empty { color: rgba(255,255,255,0.15); }
+        .star-empty { color: #e2d5c5; }
 
         .review-card {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 14px;
+            background: white;
+            border: 1px solid #f0e4d5;
+            border-radius: 16px;
             transition: all 0.2s;
         }
-        .review-card:hover { background: rgba(255,255,255,0.04); }
+        .review-card:hover { 
+            background: #fffbf7;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(199,168,123,0.08);
+        }
 
         .online-dot {
             width: 8px; height: 8px; border-radius: 50%;
-            background: #34d399;
+            background: #10b981;
             animation: pulse-dot 2s infinite;
         }
         @keyframes pulse-dot {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(52,211,153,0.4); }
-            50% { box-shadow: 0 0 0 4px rgba(52,211,153,0); }
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
+            50% { box-shadow: 0 0 0 4px rgba(16,185,129,0); }
+        }
+
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            letter-spacing: -0.02em;
+        }
+
+        .decorative-line {
+            background: linear-gradient(90deg, #c7a87b, #e8c9a3, #c7a87b);
+            height: 2px;
+            width: 40px;
+            border-radius: 2px;
         }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
 
-    <!-- SIDEBAR -->
+    <!-- SIDEBAR PREMIUM -->
     <aside class="w-60 glass-sidebar flex flex-col py-6 flex-shrink-0">
         <div class="px-5 mb-6">
-            <h1 class="text-lg font-black tracking-tighter">STREETSOLE</h1>
-            <div class="flex items-center gap-2 mt-1.5">
+            <div class="flex items-center gap-2 mb-2">
+                <i class="fas fa-shoe-prints text-[#c7a87b] text-lg"></i>
+                <h1 class="text-xl font-black tracking-tighter text-[#5c3d2e] logo-text">STREETSOLE</h1>
+            </div>
+            <div class="decorative-line"></div>
+            <div class="flex items-center gap-2 mt-3">
                 <span class="badge-admin">ADMIN</span>
-                <span class="text-[10px] text-white/30 font-medium">Full Access</span>
+                <span class="text-[10px] text-[#b7a07e] font-medium">Full Access</span>
             </div>
         </div>
 
         <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
-            <p class="text-[9px] uppercase tracking-widest text-white/20 px-2 mb-2">Overview</p>
+            <p class="text-[9px] uppercase tracking-wider text-[#b7a07e] px-2 mb-2 font-semibold">Overview</p>
             <a href="#" class="nav-item active" data-panel="ringkasan" onclick="switchPanel(this, 'ringkasan')">
                 <span class="nav-icon"><i class="fas fa-chart-bar"></i></span>
                 Ringkasan Laporan
             </a>
 
-            <p class="text-[9px] uppercase tracking-widest text-white/20 px-2 mt-4 mb-2">Kelola</p>
+            <p class="text-[9px] uppercase tracking-wider text-[#b7a07e] px-2 mt-5 mb-2 font-semibold">Kelola</p>
             <a href="#" class="nav-item" data-panel="inventori" onclick="switchPanel(this, 'inventori')">
                 <span class="nav-icon"><i class="fas fa-box"></i></span>
                 Inventori Produk
@@ -228,26 +321,26 @@
                 Manajemen User
             </a>
 
-            <p class="text-[9px] uppercase tracking-widest text-white/20 px-2 mt-4 mb-2">Analitik</p>
+            <p class="text-[9px] uppercase tracking-wider text-[#b7a07e] px-2 mt-5 mb-2 font-semibold">Analitik</p>
             <a href="#" class="nav-item" data-panel="reviews" onclick="switchPanel(this, 'reviews')">
                 <span class="nav-icon"><i class="fas fa-star"></i></span>
                 Review Produk
             </a>
         </nav>
 
-        <div class="px-3 pt-4 border-t border-white/5">
+        <div class="px-3 pt-4 border-t border-[#f0e4d5] mt-4">
             <div class="flex items-center gap-3 px-3 py-2.5 mb-2">
-                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-r from-[#c7a87b] to-[#b08f64] flex items-center justify-center text-xs font-bold text-white shadow-sm">
                     {{ strtoupper(substr($user->first_name ?? 'AS', 0, 2)) }}
                 </div>
                 <div>
-                    <p class="text-xs font-semibold">{{ $user->first_name ?? 'Admin' }} {{ $user->last_name ?? 'StreetSole' }}</p>
-                    <p class="text-[10px] text-white/30">Administrator</p>
+                    <p class="text-xs font-semibold text-[#3e2a21]">{{ $user->first_name ?? 'Admin' }} {{ $user->last_name ?? 'StreetSole' }}</p>
+                    <p class="text-[10px] text-[#b7a07e]">Administrator</p>
                 </div>
             </div>
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
-                <button type="submit" class="nav-item text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 w-full">
+                <button type="submit" class="nav-item text-rose-600 hover:text-rose-700 hover:bg-rose-50 w-full">
                     <span class="nav-icon" style="background: rgba(239,68,68,0.1);"><i class="fas fa-sign-out-alt"></i></span>
                     Logout
                 </button>
@@ -256,69 +349,69 @@
     </aside>
 
     <!-- MAIN CONTENT -->
-    <main class="flex-1 overflow-y-auto bg-[#050505]">
+    <main class="flex-1 overflow-y-auto bg-[#fdf8f0]">
 
         <!-- ===== PANEL: RINGKASAN LAPORAN ===== -->
         <div id="panel-ringkasan" class="content-panel active p-8">
             <div class="mb-8">
-                <h2 class="text-2xl font-bold">Ringkasan Laporan</h2>
-                <p class="text-white/30 text-sm mt-1">Dashboard kontrol penuh StreetSole</p>
+                <h2 class="text-2xl font-bold text-[#3e2a21]">Ringkasan Laporan</h2>
+                <p class="text-[#b7a07e] text-sm mt-1">Dashboard kontrol penuh StreetSole</p>
             </div>
 
             <!-- Stat Cards -->
             <div class="grid grid-cols-4 gap-4 mb-8">
                 <div class="stat-card rounded-2xl p-5">
                     <div class="flex items-start justify-between mb-3">
-                        <p class="text-[10px] uppercase tracking-widest text-white/30">Total Penjualan</p>
-                        <i class="fas fa-arrow-trend-up text-emerald-400 text-sm"></i>
+                        <p class="text-[10px] uppercase tracking-wider text-[#b7a07e]">Total Penjualan</p>
+                        <i class="fas fa-arrow-trend-up text-emerald-500 text-sm"></i>
                     </div>
-                    <p class="text-xl font-bold">{{ $totalSales ? 'Rp ' . number_format($totalSales, 0, ',', '.') : 'Rp 0' }}</p>
-                    <p class="text-emerald-400 text-xs mt-1.5 font-medium">+0% bulan ini</p>
+                    <p class="text-xl font-bold text-[#3e2a21]">{{ $totalSales ? 'Rp ' . number_format($totalSales, 0, ',', '.') : 'Rp 0' }}</p>
+                    <p class="text-emerald-600 text-xs mt-1.5 font-medium">+0% bulan ini</p>
                 </div>
                 <div class="stat-card rounded-2xl p-5">
                     <div class="flex items-start justify-between mb-3">
-                        <p class="text-[10px] uppercase tracking-widest text-white/30">Order Pending</p>
-                        <i class="fas fa-clock text-amber-400 text-sm"></i>
+                        <p class="text-[10px] uppercase tracking-wider text-[#b7a07e]">Order Pending</p>
+                        <i class="fas fa-clock text-amber-500 text-sm"></i>
                     </div>
-                    <p class="text-xl font-bold">{{ $pendingOrders }} Pesanan</p>
-                    <p class="text-amber-400 text-xs mt-1.5 font-medium">Perlu diproses</p>
+                    <p class="text-xl font-bold text-[#3e2a21]">{{ $pendingOrders }} Pesanan</p>
+                    <p class="text-amber-600 text-xs mt-1.5 font-medium">Perlu diproses</p>
                 </div>
                 <div class="stat-card rounded-2xl p-5">
                     <div class="flex items-start justify-between mb-3">
-                        <p class="text-[10px] uppercase tracking-widest text-white/30">Total Produk</p>
-                        <i class="fas fa-box text-white/30 text-sm"></i>
+                        <p class="text-[10px] uppercase tracking-wider text-[#b7a07e]">Total Produk</p>
+                        <i class="fas fa-box text-[#c7a87b] text-sm"></i>
                     </div>
-                    <p class="text-xl font-bold">{{ $totalProducts }} SKU</p>
-                    <p class="text-white/30 text-xs mt-1.5">Produk tersedia</p>
+                    <p class="text-xl font-bold text-[#3e2a21]">{{ $totalProducts }} SKU</p>
+                    <p class="text-[#b7a07e] text-xs mt-1.5">Produk tersedia</p>
                 </div>
                 <div class="stat-card rounded-2xl p-5">
                     <div class="flex items-start justify-between mb-3">
-                        <p class="text-[10px] uppercase tracking-widest text-white/30">Status Sistem</p>
+                        <p class="text-[10px] uppercase tracking-wider text-[#b7a07e]">Status Sistem</p>
                         <div class="online-dot"></div>
                     </div>
-                    <p class="text-xl font-bold text-emerald-400">Online</p>
-                    <p class="text-white/30 text-xs mt-1.5">Semua layanan aktif</p>
+                    <p class="text-xl font-bold text-emerald-600">Online</p>
+                    <p class="text-[#b7a07e] text-xs mt-1.5">Semua layanan aktif</p>
                 </div>
             </div>
 
             <!-- Recent Orders Table -->
             <div class="stat-card rounded-2xl overflow-hidden">
-                <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
-                    <h3 class="font-semibold text-sm">Pesanan Terbaru</h3>
-                    <span class="text-white/30 text-xs">Hari ini</span>
+                <div class="flex items-center justify-between px-6 py-4 border-b border-[#f0e4d5]">
+                    <h3 class="font-semibold text-[#3e2a21]">Pesanan Terbaru</h3>
+                    <span class="text-[#b7a07e] text-xs">Hari ini</span>
                 </div>
                 <div class="px-6">
                     <table class="w-full">
                         <thead>
-                            <tr class="border-b border-white/05">
-                                <th class="text-left text-[10px] uppercase tracking-widest text-white/25 py-3 font-medium">Order ID</th>
-                                <th class="text-left text-[10px] uppercase tracking-widest text-white/25 py-3 font-medium">Produk</th>
-                                <th class="text-left text-[10px] uppercase tracking-widest text-white/25 py-3 font-medium">Total</th>
-                                <th class="text-left text-[10px] uppercase tracking-widest text-white/25 py-3 font-medium">Status</th>
+                            <tr class="border-b border-[#f0e4d5]">
+                                <th class="text-left text-[10px] uppercase tracking-wider text-[#b7a07e] py-3 font-semibold">Order ID</th>
+                                <th class="text-left text-[10px] uppercase tracking-wider text-[#b7a07e] py-3 font-semibold">Produk</th>
+                                <th class="text-left text-[10px] uppercase tracking-wider text-[#b7a07e] py-3 font-semibold">Total</th>
+                                <th class="text-left text-[10px] uppercase tracking-wider text-[#b7a07e] py-3 font-semibold">Status</th>
                             </tr>
                         </thead>
                         <tbody id="ringkasanOrders"></tbody>
-                    </table>
+                     </table>
                 </div>
             </div>
         </div>
@@ -327,8 +420,8 @@
         <div id="panel-inventori" class="content-panel p-8">
             <div class="flex items-center justify-between mb-8">
                 <div>
-                    <h2 class="text-2xl font-bold">Inventori Produk</h2>
-                    <p class="text-white/30 text-sm mt-1">Kelola semua produk StreetSole</p>
+                    <h2 class="text-2xl font-bold text-[#3e2a21]">Inventori Produk</h2>
+                    <p class="text-[#b7a07e] text-sm mt-1">Kelola semua produk StreetSole</p>
                 </div>
                 <button onclick="openModal('modalTambahProduk')" class="action-btn btn-primary px-4 py-2 text-xs flex items-center gap-2">
                     <i class="fas fa-plus"></i> Tambah Produk
@@ -338,7 +431,7 @@
             <!-- Filter & Search -->
             <div class="flex items-center gap-3 mb-5">
                 <div class="relative flex-1 max-w-xs">
-                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/30 text-xs"></i>
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-[#b7a07e] text-xs"></i>
                     <input type="text" id="searchProduk" placeholder="Cari produk..." class="search-admin w-full" oninput="filterProduk()">
                 </div>
                 <select id="filterKategori" class="field-input max-w-[160px]" onchange="filterProduk()">
@@ -353,17 +446,17 @@
             <div class="stat-card rounded-2xl overflow-hidden">
                 <table class="w-full">
                     <thead>
-                        <tr class="border-b border-white/05">
-                            <th class="text-left text-[10px] uppercase tracking-widest text-white/25 px-5 py-3.5 font-medium">Produk</th>
-                            <th class="text-left text-[10px] uppercase tracking-widest text-white/25 px-4 py-3.5 font-medium">Kategori</th>
-                            <th class="text-left text-[10px] uppercase tracking-widest text-white/25 px-4 py-3.5 font-medium">Harga</th>
-                            <th class="text-left text-[10px] uppercase tracking-widest text-white/25 px-4 py-3.5 font-medium">Stok</th>
-                            <th class="text-left text-[10px] uppercase tracking-widest text-white/25 px-4 py-3.5 font-medium">Status</th>
-                            <th class="text-left text-[10px] uppercase tracking-widest text-white/25 px-4 py-3.5 font-medium">Aksi</th>
+                        <tr class="border-b border-[#f0e4d5]">
+                            <th class="text-left text-[10px] uppercase tracking-wider text-[#b7a07e] px-5 py-3.5 font-semibold">Produk</th>
+                            <th class="text-left text-[10px] uppercase tracking-wider text-[#b7a07e] px-4 py-3.5 font-semibold">Kategori</th>
+                            <th class="text-left text-[10px] uppercase tracking-wider text-[#b7a07e] px-4 py-3.5 font-semibold">Harga</th>
+                            <th class="text-left text-[10px] uppercase tracking-wider text-[#b7a07e] px-4 py-3.5 font-semibold">Stok</th>
+                            <th class="text-left text-[10px] uppercase tracking-wider text-[#b7a07e] px-4 py-3.5 font-semibold">Status</th>
+                            <th class="text-left text-[10px] uppercase tracking-wider text-[#b7a07e] px-4 py-3.5 font-semibold">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="produkTableBody"></tbody>
-                </table>
+                 </table>
             </div>
         </div>
 
@@ -371,8 +464,8 @@
         <div id="panel-pesanan" class="content-panel p-8">
             <div class="flex items-center justify-between mb-8">
                 <div>
-                    <h2 class="text-2xl font-bold">Manajemen Pesanan</h2>
-                    <p class="text-white/30 text-sm mt-1">Monitor dan proses semua transaksi</p>
+                    <h2 class="text-2xl font-bold text-[#3e2a21]">Manajemen Pesanan</h2>
+                    <p class="text-[#b7a07e] text-sm mt-1">Monitor dan proses semua transaksi</p>
                 </div>
                 <div class="flex gap-2">
                     <select id="filterStatusPesanan" class="field-input max-w-[140px]" onchange="filterPesanan()">
@@ -388,17 +481,17 @@
             <div class="stat-card rounded-2xl overflow-hidden">
                 <table class="w-full">
                     <thead>
-                        <tr class="border-b border-white/05">
-                            <th class="text-left text-[10px] uppercase tracking-widest text-white/25 px-5 py-3.5 font-medium">Order ID</th>
-                            <th class="text-left text-[10px] uppercase tracking-widest text-white/25 px-4 py-3.5 font-medium">Produk</th>
-                            <th class="text-left text-[10px] uppercase tracking-widest text-white/25 px-4 py-3.5 font-medium">Pembeli</th>
-                            <th class="text-left text-[10px] uppercase tracking-widest text-white/25 px-4 py-3.5 font-medium">Total</th>
-                            <th class="text-left text-[10px] uppercase tracking-widest text-white/25 px-4 py-3.5 font-medium">Status</th>
-                            <th class="text-left text-[10px] uppercase tracking-widest text-white/25 px-4 py-3.5 font-medium">Aksi</th>
+                        <tr class="border-b border-[#f0e4d5]">
+                            <th class="text-left text-[10px] uppercase tracking-wider text-[#b7a07e] px-5 py-3.5 font-semibold">Order ID</th>
+                            <th class="text-left text-[10px] uppercase tracking-wider text-[#b7a07e] px-4 py-3.5 font-semibold">Produk</th>
+                            <th class="text-left text-[10px] uppercase tracking-wider text-[#b7a07e] px-4 py-3.5 font-semibold">Pembeli</th>
+                            <th class="text-left text-[10px] uppercase tracking-wider text-[#b7a07e] px-4 py-3.5 font-semibold">Total</th>
+                            <th class="text-left text-[10px] uppercase tracking-wider text-[#b7a07e] px-4 py-3.5 font-semibold">Status</th>
+                            <th class="text-left text-[10px] uppercase tracking-wider text-[#b7a07e] px-4 py-3.5 font-semibold">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="pesananTableBody"></tbody>
-                </table>
+                 </table>
             </div>
         </div>
 
@@ -406,11 +499,11 @@
         <div id="panel-users" class="content-panel p-8">
             <div class="flex items-center justify-between mb-8">
                 <div>
-                    <h2 class="text-2xl font-bold">Manajemen User</h2>
-                    <p class="text-white/30 text-sm mt-1">Kelola akun dan hak akses pengguna</p>
+                    <h2 class="text-2xl font-bold text-[#3e2a21]">Manajemen User</h2>
+                    <p class="text-[#b7a07e] text-sm mt-1">Kelola akun dan hak akses pengguna</p>
                 </div>
                 <div class="relative">
-                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/30 text-xs"></i>
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-[#b7a07e] text-xs"></i>
                     <input type="text" id="searchUser" placeholder="Cari user..." class="search-admin" oninput="filterUsers()">
                 </div>
             </div>
@@ -418,60 +511,60 @@
             <!-- User Stats -->
             <div class="grid grid-cols-3 gap-4 mb-6">
                 <div class="stat-card rounded-xl p-4">
-                    <p class="text-white/30 text-[10px] uppercase tracking-widest mb-1">Total User</p>
-                    <p class="text-lg font-bold" id="totalUsersCount">0</p>
+                    <p class="text-[#b7a07e] text-[10px] uppercase tracking-wider mb-1">Total User</p>
+                    <p class="text-lg font-bold text-[#3e2a21]" id="totalUsersCount">0</p>
                 </div>
                 <div class="stat-card rounded-xl p-4">
-                    <p class="text-white/30 text-[10px] uppercase tracking-widest mb-1">User Aktif</p>
-                    <p class="text-lg font-bold text-emerald-400" id="activeUsersCount">0</p>
+                    <p class="text-[#b7a07e] text-[10px] uppercase tracking-wider mb-1">User Aktif</p>
+                    <p class="text-lg font-bold text-emerald-600" id="activeUsersCount">0</p>
                 </div>
                 <div class="stat-card rounded-xl p-4">
-                    <p class="text-white/30 text-[10px] uppercase tracking-widest mb-1">Admin</p>
-                    <p class="text-lg font-bold text-blue-400" id="adminUsersCount">0</p>
+                    <p class="text-[#b7a07e] text-[10px] uppercase tracking-wider mb-1">Admin</p>
+                    <p class="text-lg font-bold text-[#c7a87b]" id="adminUsersCount">0</p>
                 </div>
             </div>
 
             <div class="stat-card rounded-2xl overflow-hidden">
                 <table class="w-full">
                     <thead>
-                        <tr class="border-b border-white/05">
-                            <th class="text-left text-[10px] uppercase tracking-widest text-white/25 px-5 py-3.5 font-medium">User</th>
-                            <th class="text-left text-[10px] uppercase tracking-widest text-white/25 px-4 py-3.5 font-medium">Email</th>
-                            <th class="text-left text-[10px] uppercase tracking-widest text-white/25 px-4 py-3.5 font-medium">Role</th>
-                            <th class="text-left text-[10px] uppercase tracking-widest text-white/25 px-4 py-3.5 font-medium">Status</th>
-                            <th class="text-left text-[10px] uppercase tracking-widest text-white/25 px-4 py-3.5 font-medium">Bergabung</th>
-                            <th class="text-left text-[10px] uppercase tracking-widest text-white/25 px-4 py-3.5 font-medium">Aksi</th>
+                        <tr class="border-b border-[#f0e4d5]">
+                            <th class="text-left text-[10px] uppercase tracking-wider text-[#b7a07e] px-5 py-3.5 font-semibold">User</th>
+                            <th class="text-left text-[10px] uppercase tracking-wider text-[#b7a07e] px-4 py-3.5 font-semibold">Email</th>
+                            <th class="text-left text-[10px] uppercase tracking-wider text-[#b7a07e] px-4 py-3.5 font-semibold">Role</th>
+                            <th class="text-left text-[10px] uppercase tracking-wider text-[#b7a07e] px-4 py-3.5 font-semibold">Status</th>
+                            <th class="text-left text-[10px] uppercase tracking-wider text-[#b7a07e] px-4 py-3.5 font-semibold">Bergabung</th>
+                            <th class="text-left text-[10px] uppercase tracking-wider text-[#b7a07e] px-4 py-3.5 font-semibold">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="usersTableBody"></tbody>
-                </table>
+                 </table>
             </div>
         </div>
 
         <!-- ===== PANEL: REVIEW PRODUK ===== -->
         <div id="panel-reviews" class="content-panel p-8">
             <div class="mb-8">
-                <h2 class="text-2xl font-bold">⭐ Review Pelanggan</h2>
-                <p class="text-white/30 text-sm mt-1">Rating & ulasan produk</p>
+                <h2 class="text-2xl font-bold text-[#3e2a21]">⭐ Review Pelanggan</h2>
+                <p class="text-[#b7a07e] text-sm mt-1">Rating & ulasan produk</p>
             </div>
 
             <!-- Review Stats -->
             <div class="grid grid-cols-4 gap-4 mb-6">
                 <div class="stat-card rounded-xl p-4">
-                    <p class="text-white/30 text-[10px] uppercase tracking-widest mb-1">Total Review</p>
-                    <p class="text-lg font-bold" id="totalReviewsCount">0</p>
+                    <p class="text-[#b7a07e] text-[10px] uppercase tracking-wider mb-1">Total Review</p>
+                    <p class="text-lg font-bold text-[#3e2a21]" id="totalReviewsCount">0</p>
                 </div>
                 <div class="stat-card rounded-xl p-4">
-                    <p class="text-white/30 text-[10px] uppercase tracking-widest mb-1">Rating Rata-rata</p>
-                    <p class="text-lg font-bold text-amber-400" id="avgRating">0 ★</p>
+                    <p class="text-[#b7a07e] text-[10px] uppercase tracking-wider mb-1">Rating Rata-rata</p>
+                    <p class="text-lg font-bold text-amber-500" id="avgRating">0 ★</p>
                 </div>
                 <div class="stat-card rounded-xl p-4">
-                    <p class="text-white/30 text-[10px] uppercase tracking-widest mb-1">Bintang 5</p>
-                    <p class="text-lg font-bold text-emerald-400" id="star5Count">0</p>
+                    <p class="text-[#b7a07e] text-[10px] uppercase tracking-wider mb-1">Bintang 5</p>
+                    <p class="text-lg font-bold text-emerald-600" id="star5Count">0</p>
                 </div>
                 <div class="stat-card rounded-xl p-4">
-                    <p class="text-white/30 text-[10px] uppercase tracking-widest mb-1">Perlu Respons</p>
-                    <p class="text-lg font-bold text-amber-400">0</p>
+                    <p class="text-[#b7a07e] text-[10px] uppercase tracking-wider mb-1">Perlu Respons</p>
+                    <p class="text-lg font-bold text-amber-500">0</p>
                 </div>
             </div>
 
@@ -483,14 +576,14 @@
             @if($reviewList->count() > 0)
                 <div class="grid gap-4">
                     @foreach($reviewList as $rv)
-                        <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+                        <div class="review-card p-5">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <p class="font-semibold">
+                                    <p class="font-semibold text-[#3e2a21]">
                                         {{ $rv->user->first_name ?? 'Member' }} 
                                         {{ $rv->user->last_name ?? '' }}
                                     </p>
-                                    <p class="text-xs text-white/40">
+                                    <p class="text-xs text-[#b7a07e]">
                                         {{ $rv->created_at ? $rv->created_at->format('d M Y') : '-' }}
                                     </p>
                                 </div>
@@ -500,15 +593,15 @@
                                     @endfor
                                 </div>
                             </div>
-                            <p class="mt-2 text-white/80">{{ $rv->comment ?? 'Tidak ada komentar' }}</p>
-                            <p class="text-xs text-white/40 mt-2">
+                            <p class="mt-2 text-[#5c3d2e]">{{ $rv->comment ?? 'Tidak ada komentar' }}</p>
+                            <p class="text-xs text-[#b7a07e] mt-2">
                                 📦 {{ $rv->product->name ?? 'Produk tidak ditemukan' }}
                             </p>
                         </div>
                     @endforeach
                 </div>
             @else
-                <div class="text-center py-10 text-white/40">
+                <div class="text-center py-10 text-[#b7a07e]">
                     Belum ada review dari pelanggan
                 </div>
             @endif
@@ -518,33 +611,33 @@
     <!-- ===== MODAL: TAMBAH PRODUK ===== -->
     <div id="modalTambahProduk" class="modal-overlay">
         <div class="modal-box">
-            <div class="flex items-center justify-between px-6 py-5 border-b border-white/08">
-                <h3 class="font-bold text-sm">Tambah Produk Baru</h3>
-                <button onclick="closeModal('modalTambahProduk')" class="text-white/40 hover:text-white transition text-lg">×</button>
+            <div class="flex items-center justify-between px-6 py-5 border-b border-[#f0e4d5]">
+                <h3 class="font-bold text-[#3e2a21]">Tambah Produk Baru</h3>
+                <button onclick="closeModal('modalTambahProduk')" class="text-[#b7a07e] hover:text-[#5c3d2e] transition text-xl">&times;</button>
             </div>
             <div class="p-6 space-y-4">
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-[10px] uppercase tracking-wider text-white/40 mb-1.5">Nama Produk</label>
+                        <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Nama Produk</label>
                         <input type="text" id="newProdukNama" class="field-input" placeholder="Nama produk">
                     </div>
                     <div>
-                        <label class="block text-[10px] uppercase tracking-wider text-white/40 mb-1.5">Brand</label>
+                        <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Brand</label>
                         <input type="text" id="newProdukBrand" class="field-input" placeholder="Brand">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-[10px] uppercase tracking-wider text-white/40 mb-1.5">Harga (Rp)</label>
+                        <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Harga (Rp)</label>
                         <input type="number" id="newProdukHarga" class="field-input" placeholder="0">
                     </div>
                     <div>
-                        <label class="block text-[10px] uppercase tracking-wider text-white/40 mb-1.5">Stok Awal (Size 42)</label>
+                        <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Stok Awal (Size 42)</label>
                         <input type="number" id="newProdukStok" class="field-input" placeholder="0">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-white/40 mb-1.5">Kategori</label>
+                    <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Kategori</label>
                     <select id="newProdukKategori" class="field-input">
                         <option value="sneakers">Sneakers</option>
                         <option value="formal">Formal</option>
@@ -554,7 +647,7 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-white/40 mb-1.5">Deskripsi</label>
+                    <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Deskripsi</label>
                     <textarea id="newProdukDesc" class="field-input resize-none" rows="3" placeholder="Deskripsi produk..."></textarea>
                 </div>
                 <div class="flex gap-3 pt-2">
@@ -568,19 +661,19 @@
     <!-- ===== MODAL: EDIT STOK PRODUK ===== -->
     <div id="modalEditStok" class="modal-overlay">
         <div class="modal-box">
-            <div class="flex items-center justify-between px-6 py-5 border-b border-white/08">
-                <h3 class="font-bold text-sm">Edit Stok Produk</h3>
-                <button onclick="closeModal('modalEditStok')" class="text-white/40 hover:text-white transition text-lg">×</button>
+            <div class="flex items-center justify-between px-6 py-5 border-b border-[#f0e4d5]">
+                <h3 class="font-bold text-[#3e2a21]">Edit Stok Produk</h3>
+                <button onclick="closeModal('modalEditStok')" class="text-[#b7a07e] hover:text-[#5c3d2e] transition text-xl">&times;</button>
             </div>
             <div class="p-6 space-y-4">
                 <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-white/40 mb-1.5">Produk & Ukuran</label>
-                    <p class="text-sm font-semibold" id="editStokProdukNama">-</p>
+                    <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Produk & Ukuran</label>
+                    <p class="text-sm font-semibold text-[#3e2a21]" id="editStokProdukNama">-</p>
                     <input type="hidden" id="editStokStockId">
                     <input type="hidden" id="editStokProdukId">
                 </div>
                 <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-white/40 mb-1.5">Stok Baru</label>
+                    <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Stok Baru</label>
                     <input type="number" id="editStokValue" class="field-input" placeholder="Jumlah stok" min="0">
                 </div>
                 <div class="flex gap-3 pt-2">
@@ -594,17 +687,17 @@
     <!-- ===== MODAL: EDIT STATUS PESANAN ===== -->
     <div id="modalEditPesanan" class="modal-overlay">
         <div class="modal-box">
-            <div class="flex items-center justify-between px-6 py-5 border-b border-white/08">
-                <h3 class="font-bold text-sm">Update Status Pesanan</h3>
-                <button onclick="closeModal('modalEditPesanan')" class="text-white/40 hover:text-white transition text-lg">×</button>
+            <div class="flex items-center justify-between px-6 py-5 border-b border-[#f0e4d5]">
+                <h3 class="font-bold text-[#3e2a21]">Update Status Pesanan</h3>
+                <button onclick="closeModal('modalEditPesanan')" class="text-[#b7a07e] hover:text-[#5c3d2e] transition text-xl">&times;</button>
             </div>
             <div class="p-6 space-y-4">
                 <div>
-                    <p class="text-[10px] uppercase tracking-wider text-white/40 mb-1.5">Order ID</p>
-                    <p class="text-sm font-bold" id="editPesananId">-</p>
+                    <p class="text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Order ID</p>
+                    <p class="text-sm font-bold text-[#3e2a21]" id="editPesananId">-</p>
                 </div>
                 <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-white/40 mb-1.5">Status Baru</label>
+                    <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Status Baru</label>
                     <select id="editPesananStatus" class="field-input">
                         <option value="paid">Dibayar</option>
                         <option value="processed">Diproses</option>
@@ -621,7 +714,7 @@
     </div>
 
     <!-- TOAST -->
-    <div id="toast"><i class="fas fa-check-circle text-emerald-400"></i><span id="toastMsg"></span></div>
+    <div id="toast"><i class="fas fa-check-circle text-[#c7a87b]"></i><span id="toastMsg"></span></div>
 
     <script>
         // ===== DATA DARI DATABASE (via Laravel) =====
@@ -649,7 +742,7 @@
         @endphp
         
         // Update stat cards dengan data real
-        document.querySelector('.stat-card:first-child p.text-xl').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(totalSales || 0);
+        document.querySelectorAll('.stat-card')[0].querySelector('p.text-xl').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(totalSales || 0);
         document.querySelectorAll('.stat-card')[1].querySelector('p.text-xl').innerText = (pendingOrders || 0) + ' Pesanan';
         document.querySelectorAll('.stat-card')[2].querySelector('p.text-xl').innerText = (totalProducts || 0) + ' SKU';
         
@@ -669,7 +762,7 @@
         function showToast(msg, ok = true) {
             const t = document.getElementById('toast');
             document.getElementById('toastMsg').innerText = msg;
-            t.querySelector('i').className = ok ? 'fas fa-check-circle text-emerald-400' : 'fas fa-exclamation-circle text-rose-400';
+            t.querySelector('i').className = ok ? 'fas fa-check-circle text-[#c7a87b]' : 'fas fa-exclamation-circle text-rose-500';
             t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 2800);
         }
@@ -693,16 +786,16 @@
             const tbody = document.getElementById('ringkasanOrders');
             const recent = pesananData.slice(0, 6);
             if (recent.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="py-4 text-center text-white/40">Belum ada pesanan</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" class="py-4 text-center text-[#b7a07e]">Belum ada pesanan</td></tr>';
                 return;
             }
             tbody.innerHTML = recent.map(p => `
                 <tr class="table-row">
-                    <td class="py-3.5 pr-4 text-sm font-mono text-white/60">${p.order_number || p.id}</td>
-                    <td class="py-3.5 pr-4 text-sm font-semibold">${p.produk || '-'}</td>
-                    <td class="py-3.5 pr-4 text-sm">${formatRp(p.total)}</td>
+                    <td class="py-3.5 pr-4 text-sm font-mono text-[#8b7355]">${p.order_number || p.id}</td>
+                    <td class="py-3.5 pr-4 text-sm font-semibold text-[#3e2a21]">${p.produk || '-'}</td>
+                    <td class="py-3.5 pr-4 text-sm text-[#5c3d2e]">${formatRp(p.total)}</td>
                     <td class="py-3.5"><span class="status-badge status-${getStatusClass(p.status)}">${getStatusLabel(p.status)}</span></td>
-                </tr>
+                 </tr>
             `).join('');
         }
 
@@ -721,11 +814,10 @@
             const list = data || produkData;
             const tbody = document.getElementById('produkTableBody');
             if (!list || list.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="py-4 text-center text-white/40">Belum ada produk</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="py-4 text-center text-[#b7a07e]">Belum ada produk</td></tr>';
                 return;
             }
             tbody.innerHTML = list.map(p => {
-                // Hitung total stok dari semua size
                 let totalStok = 0;
                 let firstStock = null;
                 if (p.stocks && p.stocks.length > 0) {
@@ -741,21 +833,20 @@
                     <tr class="table-row">
                         <td class="px-5 py-3.5">
                             <div class="flex items-center gap-3">
-                                <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white/20 flex-shrink-0"
-                                     style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);">
-                                    <i class="fas fa-shoe-prints text-xs"></i>
+                                <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-white border border-[#f0e4d5]">
+                                    <i class="fas fa-shoe-prints text-[#c7a87b] text-xs"></i>
                                 </div>
                                 <div>
-                                    <p class="text-sm font-semibold">${p.name || '-'}</p>
-                                    <p class="text-white/30 text-xs">${p.brand || '-'}</p>
+                                    <p class="text-sm font-semibold text-[#3e2a21]">${p.name || '-'}</p>
+                                    <p class="text-[#b7a07e] text-xs">${p.brand || '-'}</p>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-4 py-3.5 text-sm text-white/60 capitalize">${p.category || '-'}</td>
-                        <td class="px-4 py-3.5 text-sm font-medium">${formatRp(p.price)}</td>
+                        <td class="px-4 py-3.5 text-sm text-[#8b7355] capitalize">${p.category || '-'}</td>
+                        <td class="px-4 py-3.5 text-sm font-medium text-[#5c3d2e]">${formatRp(p.price)}</td>
                         <td class="px-4 py-3.5">
-                            <span class="text-sm font-semibold ${totalStok <= 3 ? 'text-rose-400' : 'text-white'}">${totalStok}</span>
-                            ${totalStok <= 3 ? '<span class="text-rose-400 text-[10px] ml-1">hampir habis</span>' : ''}
+                            <span class="text-sm font-semibold ${totalStok <= 3 ? 'text-rose-600' : 'text-[#3e2a21]'}">${totalStok}</span>
+                            ${totalStok <= 3 ? '<span class="text-rose-500 text-[10px] ml-1">hampir habis</span>' : ''}
                         </td>
                         <td class="px-4 py-3.5">
                             <span class="status-badge ${p.status === 'aktif' ? 'status-aktif' : 'status-nonaktif'}">${p.status === 'aktif' ? 'Aktif' : 'Nonaktif'}</span>
@@ -769,7 +860,7 @@
                                 <button onclick="hapusProduk(${p.id})" class="action-btn btn-delete">Hapus</button>
                             </div>
                         </td>
-                    </tr>
+                     </tr>
                 `;
             }).join('');
         }
@@ -813,7 +904,6 @@
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    // Update data di frontend
                     const productId = document.getElementById('editStokProdukId').value;
                     const product = produkData.find(p => p.id == productId);
                     if (product && product.stocks) {
@@ -916,22 +1006,22 @@
             const list = data || pesananData;
             const tbody = document.getElementById('pesananTableBody');
             if (!list || list.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="py-4 text-center text-white/40">Belum ada pesanan</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="py-4 text-center text-[#b7a07e]">Belum ada pesanan</td></tr>';
                 return;
             }
             tbody.innerHTML = list.map(p => `
                 <tr class="table-row">
-                    <td class="px-5 py-3.5 text-sm font-mono text-white/60">${p.order_number || p.id}</td>
-                    <td class="px-4 py-3.5 text-sm font-semibold">${p.produk || '-'}</td>
-                    <td class="px-4 py-3.5 text-sm text-white/60">${p.pembeli || '-'}</td>
-                    <td class="px-4 py-3.5 text-sm font-medium">${formatRp(p.total)}</td>
+                    <td class="px-5 py-3.5 text-sm font-mono text-[#8b7355]">${p.order_number || p.id}</td>
+                    <td class="px-4 py-3.5 text-sm font-semibold text-[#3e2a21]">${p.produk || '-'}</td>
+                    <td class="px-4 py-3.5 text-sm text-[#8b7355]">${p.pembeli || '-'}</td>
+                    <td class="px-4 py-3.5 text-sm font-medium text-[#5c3d2e]">${formatRp(p.total)}</td>
                     <td class="px-4 py-3.5">
                         <span class="status-badge status-${getStatusClass(p.status)}">${getStatusLabel(p.status)}</span>
                     </td>
                     <td class="px-4 py-3.5">
                         <button onclick="bukaEditPesanan('${p.order_number || p.id}')" class="action-btn btn-edit">Update Status</button>
                     </td>
-                </tr>
+                 </tr>
             `).join('');
 
             const pending = pesananData.filter(p => p.status === 'paid').length;
@@ -981,30 +1071,30 @@
             const list = data || usersData;
             const tbody = document.getElementById('usersTableBody');
             if (!list || list.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="py-4 text-center text-white/40">Belum ada user</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="py-4 text-center text-[#b7a07e]">Belum ada user</td></tr>';
                 return;
             }
             tbody.innerHTML = list.map(u => `
                 <tr class="table-row">
                     <td class="px-5 py-3.5">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-white/08 flex items-center justify-center text-xs font-bold flex-shrink-0">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-r from-[#c7a87b] to-[#b08f64] flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
                                 ${(u.first_name?.substring(0,2) || u.nama?.substring(0,2) || 'MB').toUpperCase()}
                             </div>
                             <div>
-                                <p class="text-sm font-semibold">${u.first_name && u.last_name ? u.first_name + ' ' + u.last_name : (u.nama || u.username)}</p>
-                                <p class="text-white/30 text-xs">@${u.username}</p>
+                                <p class="text-sm font-semibold text-[#3e2a21]">${u.first_name && u.last_name ? u.first_name + ' ' + u.last_name : (u.nama || u.username)}</p>
+                                <p class="text-[#b7a07e] text-xs">@${u.username}</p>
                             </div>
                         </div>
                     </td>
-                    <td class="px-4 py-3.5 text-sm text-white/50">${u.email}</td>
+                    <td class="px-4 py-3.5 text-sm text-[#8b7355]">${u.email}</td>
                     <td class="px-4 py-3.5">
                         <span class="status-badge ${u.role === 'admin' ? 'status-dikirim' : 'status-pending'}">${u.role}</span>
                     </td>
                     <td class="px-4 py-3.5">
                         <span class="status-badge ${u.status === 'aktif' || u.status === 'Aktif' ? 'status-aktif' : 'status-nonaktif'}">${u.status === 'aktif' ? 'Aktif' : (u.status || 'Nonaktif')}</span>
                     </td>
-                    <td class="px-4 py-3.5 text-sm text-white/40">${u.created_at ? new Date(u.created_at).toLocaleDateString('id-ID') : (u.bergabung || '-')}</td>
+                    <td class="px-4 py-3.5 text-sm text-[#b7a07e]">${u.created_at ? new Date(u.created_at).toLocaleDateString('id-ID') : (u.bergabung || '-')}</td>
                     <td class="px-4 py-3.5">
                         <div class="flex gap-2">
                             <button onclick="toggleStatusUser(${u.id})" class="action-btn btn-edit">
@@ -1012,7 +1102,7 @@
                             </button>
                         </div>
                     </td>
-                </tr>
+                 </tr>
             `).join('');
 
             document.getElementById('totalUsersCount').innerText = usersData.length;
