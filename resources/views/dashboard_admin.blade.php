@@ -12,16 +12,17 @@
         * { font-family: 'Inter', sans-serif; }
         
         body { 
-            background: linear-gradient(135deg, #fffcf8 0%, #fef7f0 100%);
+            background: linear-gradient(160deg, #fffdf9 0%, #fef5e7 35%, #f8eed8 65%, #fdf5eb 100%);
             color: #3e2a21;
         }
 
         /* Glass Sidebar Premium */
         .glass-sidebar {
-            background: rgba(255, 252, 248, 0.98);
-            backdrop-filter: blur(20px);
-            border-right: 1px solid rgba(199,168,123,0.2);
-            box-shadow: 4px 0 20px rgba(0,0,0,0.02);
+            background: rgba(255, 252, 248, 0.95);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-right: 1px solid rgba(199,168,123,0.15);
+            box-shadow: 4px 0 30px rgba(0,0,0,0.03);
         }
 
         .nav-item {
@@ -73,12 +74,24 @@
             border-radius: 20px;
             transition: all 0.3s ease;
             box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            position: relative;
+            overflow: hidden;
         }
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #c7a87b, #e8c9a3, #c7a87b);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .stat-card:hover::after { opacity: 1; }
         .stat-card:hover {
             background: #fffbf7;
             border-color: #e0cfbe;
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(199,168,123,0.1);
+            box-shadow: 0 12px 28px rgba(199,168,123,0.12);
         }
 
         .content-panel { display: none; }
@@ -100,6 +113,39 @@
             font-weight: 700; 
             padding: 2px 8px; 
             border-radius: 30px; 
+        }
+
+        .img-preview {
+            width: 100%;
+            height: 120px;
+            border-radius: 12px;
+            border: 2px dashed #f0e4d5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: #fffcf8;
+            margin-bottom: 10px;
+        }
+        .img-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .size-chip {
+            background: #f5ede3;
+            border: 1px solid #e8ddce;
+            border-radius: 8px;
+            padding: 4px 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .size-chip button {
+            color: #rose-500;
+            cursor: pointer;
         }
         .badge-count { 
             background: #c7a87b;
@@ -202,13 +248,24 @@
         }
         .btn-primary { 
             color: white; 
-            background: #c7a87b; 
-            border-color: #c7a87b; 
+            background: linear-gradient(135deg, #c7a87b 0%, #b08f64 50%, #c7a87b 100%);
+            background-size: 200% auto;
+            border-color: #c7a87b;
+            position: relative;
+            overflow: hidden;
         }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s ease;
+        }
+        .btn-primary:hover::before { left: 100%; }
         .btn-primary:hover { 
-            background: #b08f64;
+            background-position: right center;
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(199,168,123,0.3);
+            box-shadow: 0 6px 16px rgba(199,168,123,0.35);
         }
 
         .search-admin {
@@ -288,9 +345,16 @@
     <!-- SIDEBAR PREMIUM -->
     <aside class="w-60 glass-sidebar flex flex-col py-6 flex-shrink-0">
         <div class="px-5 mb-6">
-            <div class="flex items-center gap-2 mb-2">
-                <i class="fas fa-shoe-prints text-[#c7a87b] text-lg"></i>
-                <h1 class="text-xl font-black tracking-tighter text-[#5c3d2e] logo-text">STREETSOLE</h1>
+            <div class="flex items-center gap-2.5 mb-3">
+                <svg width="32" height="32" viewBox="0 0 120 120">
+                    <defs><linearGradient id="logoGradA" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#c7a87b"/><stop offset="100%" style="stop-color:#8b6914"/></linearGradient></defs>
+                    <circle cx="60" cy="60" r="56" fill="none" stroke="url(#logoGradA)" stroke-width="4"/>
+                    <text x="60" y="72" text-anchor="middle" font-family="Playfair Display,serif" font-weight="800" font-size="52" fill="url(#logoGradA)">SS</text>
+                </svg>
+                <div>
+                    <h1 class="text-base font-black tracking-tight text-[#5c3d2e] leading-none logo-text">STREET<span class="text-[#c7a87b]">SOLE</span></h1>
+                    <p class="text-[7px] tracking-[0.3em] text-[#b7a07e] uppercase font-semibold">Premium Footwear</p>
+                </div>
             </div>
             <div class="decorative-line"></div>
             <div class="flex items-center gap-2 mt-3">
@@ -423,7 +487,7 @@
                     <h2 class="text-2xl font-bold text-[#3e2a21]">Inventori Produk</h2>
                     <p class="text-[#b7a07e] text-sm mt-1">Kelola semua produk StreetSole</p>
                 </div>
-                <button onclick="openModal('modalTambahProduk')" class="action-btn btn-primary px-4 py-2 text-xs flex items-center gap-2">
+                <button onclick="openModalTambahProduk()" class="action-btn btn-primary px-4 py-2 text-xs flex items-center gap-2">
                     <i class="fas fa-plus"></i> Tambah Produk
                 </button>
             </div>
@@ -608,79 +672,80 @@
         </div>
     </main>
 
-    <!-- ===== MODAL: TAMBAH PRODUK ===== -->
-    <div id="modalTambahProduk" class="modal-overlay">
-        <div class="modal-box">
+    <!-- ===== MODAL: TAMBAH/EDIT PRODUK ===== -->
+    <div id="modalProduk" class="modal-overlay">
+        <div class="modal-box max-w-2xl">
             <div class="flex items-center justify-between px-6 py-5 border-b border-[#f0e4d5]">
-                <h3 class="font-bold text-[#3e2a21]">Tambah Produk Baru</h3>
-                <button onclick="closeModal('modalTambahProduk')" class="text-[#b7a07e] hover:text-[#5c3d2e] transition text-xl">&times;</button>
+                <h3 class="font-bold text-[#3e2a21]" id="modalProdukTitle">Tambah Produk Baru</h3>
+                <button onclick="closeModal('modalProduk')" class="text-[#b7a07e] hover:text-[#5c3d2e] transition text-xl">&times;</button>
             </div>
-            <div class="p-6 space-y-4">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Nama Produk</label>
-                        <input type="text" id="newProdukNama" class="field-input" placeholder="Nama produk">
+            <form id="formProduk" class="p-6 space-y-4" onsubmit="handleSimpanProduk(event)">
+                <input type="hidden" id="editProdukId">
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Kolom Kiri: Foto & Basic Info -->
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Foto Produk</label>
+                            <div class="img-preview" id="previewContainer">
+                                <span class="text-[10px] text-[#b7a07e]">No Image</span>
+                            </div>
+                            <input type="file" id="produkImage" class="hidden" accept="image/*" onchange="previewImage(this)">
+                            <button type="button" onclick="document.getElementById('produkImage').click()" class="w-full py-2 border border-[#c7a87b] text-[#c7a87b] rounded-xl text-[10px] font-bold hover:bg-[#c7a87b] hover:text-white transition">
+                                <i class="fas fa-camera mr-1"></i> Pilih Foto
+                            </button>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Nama Produk</label>
+                            <input type="text" id="produkNama" name="name" class="field-input" required>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Brand</label>
+                            <input type="text" id="produkBrand" name="brand" class="field-input" required>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Brand</label>
-                        <input type="text" id="newProdukBrand" class="field-input" placeholder="Brand">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Harga (Rp)</label>
-                        <input type="number" id="newProdukHarga" class="field-input" placeholder="0">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Stok Awal (Size 42)</label>
-                        <input type="number" id="newProdukStok" class="field-input" placeholder="0">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Kategori</label>
-                    <select id="newProdukKategori" class="field-input">
-                        <option value="sneakers">Sneakers</option>
-                        <option value="formal">Formal</option>
-                        <option value="sandals">Sandals</option>
-                        <option value="heels">Heels</option>
-                        <option value="crocs">Crocs</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Deskripsi</label>
-                    <textarea id="newProdukDesc" class="field-input resize-none" rows="3" placeholder="Deskripsi produk..."></textarea>
-                </div>
-                <div class="flex gap-3 pt-2">
-                    <button onclick="tambahProduk()" class="action-btn btn-primary flex-1 py-2.5 text-xs">Simpan Produk</button>
-                    <button onclick="closeModal('modalTambahProduk')" class="action-btn btn-edit flex-1 py-2.5 text-xs">Batal</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- ===== MODAL: EDIT STOK PRODUK ===== -->
-    <div id="modalEditStok" class="modal-overlay">
-        <div class="modal-box">
-            <div class="flex items-center justify-between px-6 py-5 border-b border-[#f0e4d5]">
-                <h3 class="font-bold text-[#3e2a21]">Edit Stok Produk</h3>
-                <button onclick="closeModal('modalEditStok')" class="text-[#b7a07e] hover:text-[#5c3d2e] transition text-xl">&times;</button>
-            </div>
-            <div class="p-6 space-y-4">
-                <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Produk & Ukuran</label>
-                    <p class="text-sm font-semibold text-[#3e2a21]" id="editStokProdukNama">-</p>
-                    <input type="hidden" id="editStokStockId">
-                    <input type="hidden" id="editStokProdukId">
+                    <!-- Kolom Kanan: Harga, Kategori, Stok -->
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Harga (Rp)</label>
+                                <input type="number" id="produkHarga" name="price" class="field-input" required>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Kategori</label>
+                                <select id="produkKategori" name="category" class="field-input">
+                                    <option value="sneakers">Sneakers</option>
+                                    <option value="formal">Formal</option>
+                                    <option value="sandals">Sandals</option>
+                                    <option value="heels">Heels</option>
+                                    <option value="crocs">Crocs</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold flex justify-between">
+                                Manajemen Stok (Size)
+                                <button type="button" onclick="addNewSizeRow()" class="text-[#c7a87b] hover:underline">+ Tambah Size</button>
+                            </label>
+                            <div id="sizeStockContainer" class="space-y-2 max-h-[150px] overflow-y-auto pr-2">
+                                <!-- Size rows will be here -->
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Deskripsi</label>
+                            <textarea id="produkDesc" name="description" class="field-input resize-none" rows="3"></textarea>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-[#b7a07e] mb-1.5 font-semibold">Stok Baru</label>
-                    <input type="number" id="editStokValue" class="field-input" placeholder="Jumlah stok" min="0">
+
+                <div class="flex gap-3 pt-4 border-t border-[#f0e4d5]">
+                    <button type="submit" class="action-btn btn-primary flex-1 py-3 font-bold">Simpan Perubahan</button>
+                    <button type="button" onclick="closeModal('modalProduk')" class="action-btn btn-edit flex-1 py-3">Batal</button>
                 </div>
-                <div class="flex gap-3 pt-2">
-                    <button onclick="simpanEditStok()" class="action-btn btn-primary flex-1 py-2.5 text-xs">Simpan Stok</button>
-                    <button onclick="closeModal('modalEditStok')" class="action-btn btn-edit flex-1 py-2.5 text-xs">Batal</button>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
 
@@ -819,22 +884,21 @@
             }
             tbody.innerHTML = list.map(p => {
                 let totalStok = 0;
-                let firstStock = null;
                 if (p.stocks && p.stocks.length > 0) {
                     totalStok = p.stocks.reduce((sum, s) => sum + (s.quantity || 0), 0);
-                    firstStock = p.stocks[0];
                 }
                 
-                const editBtn = firstStock ? 
-                    `<button onclick="openEditStok(${p.id}, '${(p.name || '').replace(/'/g, "\\'")}', ${firstStock.id}, ${firstStock.quantity})" class="action-btn btn-edit">Edit Stok</button>` :
-                    `<button class="action-btn btn-edit opacity-50 cursor-not-allowed" disabled>Stok?</button>`;
-                
+                const imgSrc = p.image ? `/storage/${p.image}` : null;
+                const imgDisplay = imgSrc ? 
+                    `<img src="${imgSrc}" class="w-full h-full object-cover">` : 
+                    `<i class="fas fa-shoe-prints text-[#c7a87b] text-xs"></i>`;
+
                 return `
                     <tr class="table-row">
                         <td class="px-5 py-3.5">
                             <div class="flex items-center gap-3">
-                                <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-white border border-[#f0e4d5]">
-                                    <i class="fas fa-shoe-prints text-[#c7a87b] text-xs"></i>
+                                <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-white border border-[#f0e4d5] overflow-hidden">
+                                    ${imgDisplay}
                                 </div>
                                 <div>
                                     <p class="text-sm font-semibold text-[#3e2a21]">${p.name || '-'}</p>
@@ -853,7 +917,7 @@
                         </td>
                         <td class="px-4 py-3.5">
                             <div class="flex gap-2 flex-wrap">
-                                ${editBtn}
+                                <button onclick="openEditProduk(${p.id})" class="action-btn btn-edit">Edit Produk</button>
                                 <button onclick="toggleStatusProduk(${p.id})" class="action-btn btn-edit">
                                     ${p.status === 'aktif' ? 'Nonaktifkan' : 'Aktifkan'}
                                 </button>
@@ -875,93 +939,124 @@
             renderProduk(filtered);
         }
 
-        // ===== EDIT STOK =====
-        function openEditStok(id, nama, stockId, currentQty) {
-            document.getElementById('editStokProdukId').value = id;
-            document.getElementById('editStokStockId').value = stockId;
-            document.getElementById('editStokProdukNama').innerHTML = nama;
-            document.getElementById('editStokValue').value = currentQty;
-            openModal('modalEditStok');
-        }
+        // ===== EDIT PRODUK =====
+        function openEditProduk(id) {
+            const p = produkData.find(x => x.id === id);
+            if (!p) return;
 
-        function simpanEditStok() {
-            const stockId = document.getElementById('editStokStockId').value;
-            const stokBaru = parseInt(document.getElementById('editStokValue').value) || 0;
+            document.getElementById('modalProdukTitle').innerText = 'Edit Produk';
+            document.getElementById('editProdukId').value = p.id;
+            document.getElementById('produkNama').value = p.name;
+            document.getElementById('produkBrand').value = p.brand;
+            document.getElementById('produkHarga').value = p.price;
+            document.getElementById('produkKategori').value = p.category;
+            document.getElementById('produkDesc').value = p.description || '';
             
-            if (!stockId) {
-                showToast('Stok ID tidak valid', false);
-                return;
+            // Image Preview
+            const preview = document.getElementById('previewContainer');
+            if (p.image) {
+                preview.innerHTML = `<img src="/storage/${p.image}" class="w-full h-full object-cover">`;
+            } else {
+                preview.innerHTML = `<span class="text-[10px] text-[#b7a07e]">No Image</span>`;
             }
 
-            fetch(`/admin/product-stock/${stockId}/update`, {
+            // Sizes
+            const container = document.getElementById('sizeStockContainer');
+            container.innerHTML = '';
+            if (p.stocks && p.stocks.length > 0) {
+                p.stocks.forEach(s => addNewSizeRow(s.size, s.quantity));
+            } else {
+                addNewSizeRow('42', 0);
+            }
+
+            openModal('modalProduk');
+        }
+
+        function openModalTambahProduk() {
+            document.getElementById('modalProdukTitle').innerText = 'Tambah Produk Baru';
+            document.getElementById('editProdukId').value = '';
+            document.getElementById('formProduk').reset();
+            document.getElementById('previewContainer').innerHTML = `<span class="text-[10px] text-[#b7a07e]">No Image</span>`;
+            document.getElementById('sizeStockContainer').innerHTML = '';
+            addNewSizeRow('42', 0);
+            openModal('modalProduk');
+        }
+
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewContainer').innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function addNewSizeRow(size = '', qty = 0) {
+            const container = document.getElementById('sizeStockContainer');
+            const div = document.createElement('div');
+            div.className = 'flex items-center gap-2 mb-2';
+            div.innerHTML = `
+                <input type="text" placeholder="Size" class="field-input size-input" value="${size}" style="padding: 8px 12px">
+                <input type="number" placeholder="Qty" class="field-input qty-input" value="${qty}" style="padding: 8px 12px">
+                <button type="button" onclick="this.parentElement.remove()" class="text-rose-500 p-2"><i class="fas fa-trash"></i></button>
+            `;
+            container.appendChild(div);
+        }
+
+        function handleSimpanProduk(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editProdukId').value;
+            const formData = new FormData();
+            
+            formData.append('name', document.getElementById('produkNama').value);
+            formData.append('brand', document.getElementById('produkBrand').value);
+            formData.append('price', document.getElementById('produkHarga').value);
+            formData.append('category', document.getElementById('produkKategori').value);
+            formData.append('description', document.getElementById('produkDesc').value);
+            
+            const imageInput = document.getElementById('produkImage');
+            if (imageInput.files[0]) {
+                formData.append('image', imageInput.files[0]);
+            }
+
+            // Collect Stocks
+            const stocks = [];
+            const rows = document.querySelectorAll('#sizeStockContainer > div');
+            rows.forEach(row => {
+                const size = row.querySelector('.size-input').value.trim();
+                const qty = row.querySelector('.qty-input').value;
+                if (size) {
+                    stocks.push({ size: size, quantity: parseInt(qty) || 0 });
+                }
+            });
+            formData.append('stocks', JSON.stringify(stocks));
+            formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+
+            const url = editId ? `/admin/product/${editId}/update` : '/admin/product/add';
+            
+            fetch(url, {
                 method: 'POST',
+                body: formData,
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
-                },
-                body: JSON.stringify({ quantity: stokBaru })
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
             })
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    const productId = document.getElementById('editStokProdukId').value;
-                    const product = produkData.find(p => p.id == productId);
-                    if (product && product.stocks) {
-                        const stockItem = product.stocks.find(s => s.id == stockId);
-                        if (stockItem) stockItem.quantity = stokBaru;
-                    }
-                    renderProduk();
-                    closeModal('modalEditStok');
-                    showToast('Stok berhasil diupdate');
+                    showToast(editId ? 'Produk berhasil diupdate!' : 'Produk berhasil ditambahkan!');
+                    setTimeout(() => location.reload(), 1000);
                 } else {
-                    showToast(data.message || 'Gagal update stok', false);
+                    showToast(data.message || 'Gagal menyimpan produk', false);
                 }
             })
             .catch(err => {
                 console.error(err);
-                showToast('Gagal menyimpan ke server', false);
+                showToast('Gagal terhubung ke server', false);
             });
         }
 
-        // ===== TAMBAH PRODUK =====
-        function tambahProduk() {
-            const nama = document.getElementById('newProdukNama').value.trim();
-            const brand = document.getElementById('newProdukBrand').value.trim();
-            const harga = parseInt(document.getElementById('newProdukHarga').value) || 0;
-            const stok = parseInt(document.getElementById('newProdukStok').value) || 0;
-            const kategori = document.getElementById('newProdukKategori').value;
-            const deskripsi = document.getElementById('newProdukDesc').value.trim();
-
-            if (!nama || !brand) { showToast('Nama dan brand wajib diisi!', false); return; }
-            
-            fetch('/admin/product/add', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json', 
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' 
-                },
-                body: JSON.stringify({ 
-                    name: nama, 
-                    brand: brand, 
-                    price: harga, 
-                    stock: stok, 
-                    category: kategori, 
-                    description: deskripsi 
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    showToast('Produk berhasil ditambahkan! Refresh halaman...');
-                    setTimeout(() => location.reload(), 1500);
-                } else {
-                    showToast(data.message || 'Gagal menambahkan produk', false);
-                }
-            })
-            .catch(() => showToast('Gagal menambahkan produk', false));
-        }
-
-        // ===== TOGGLE STATUS PRODUK =====
         function toggleStatusProduk(id) {
             const p = produkData.find(x => x.id === id);
             if (p) {
@@ -984,7 +1079,6 @@
             }
         }
 
-        // ===== HAPUS PRODUK =====
         function hapusProduk(id) {
             if (confirm('Yakin ingin menghapus produk ini?')) {
                 fetch(`/admin/product/${id}/delete`, {

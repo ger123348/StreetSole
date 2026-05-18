@@ -23,38 +23,93 @@ class AdminController extends Controller
     {
         $this->checkAdmin();
         
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('products', 'public');
+        }
+        
         $product = Product::create([
             'name' => $request->name,
             'brand' => $request->brand,
             'category' => $request->category,
             'price' => $request->price,
             'description' => $request->description,
+            'image' => $imagePath,
             'status' => 'aktif',
         ]);
         
-        // Buat stok default (size 42)
-        ProductStock::create([
-            'product_id' => $product->id,
-            'size' => '42',
-            'quantity' => $request->stock ?? 0,
-        ]);
+        // Handle Stocks
+        if ($request->has('stocks')) {
+            $stocks = json_decode($request->stocks, true);
+            foreach ($stocks as $s) {
+                ProductStock::create([
+                    'product_id' => $product->id,
+                    'size' => $s['size'],
+                    'quantity' => $s['quantity'],
+                ]);
+            }
+        } else {
+            // Default stock if none provided
+            ProductStock::create([
+                'product_id' => $product->id,
+                'size' => '42',
+                'quantity' => $request->stock ?? 0,
+            ]);
+        }
         
         return response()->json(['success' => true, 'id' => $product->id]);
     }
     
-    // UPDATE STOK (via ProductStock)
-    public function updateStock(Request $request, $stockId)
+    // UPDATE PRODUK (Info + Image + Stocks)
+    public function updateProduct(Request $request, $id)
     {
         $this->checkAdmin();
         
-        $stock = ProductStock::find($stockId);
-        if (!$stock) {
-            return response()->json(['success' => false, 'message' => 'Stok tidak ditemukan']);
+        $product = Product::find($id);
+        if (!$product) {
+            return response()->json(['success' => false, 'message' => 'Produk tidak ditemukan']);
         }
         
-        $stock->quantity = (int) $request->quantity;
-        $stock->save();
+        $product->name = $request->name;
+        $product->brand = $request->brand;
+        $product->category = $request->category;
+        $product->price = $request->price;
+        $product->description = $request->description;
         
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('products', 'public');
+            $product->image = $path;
+        }
+        
+        $product->save();
+        
+        if ($request->has('stocks')) {
+            $stocks = json_decode($request->stocks, true);
+            $existingSizes = [];
+            
+            foreach ($stocks as $s) {
+                $existingSizes[] = $s['size'];
+                ProductStock::updateOrCreate(
+                    ['product_id' => $product->id, 'size' => $s['size']],
+                    ['quantity' => $s['quantity']]
+                );
+            }
+            
+            // Optional: Delete sizes not in the request
+            // ProductStock::where('product_id', $product->id)->whereNotIn('size', $existingSizes)->delete();
+        }
+        
+        return response()->json(['success' => true]);
+    }
+    
+    // DELETE STOCK SIZE
+    public function deleteStockSize(Request $request, $id)
+    {
+        $this->checkAdmin();
+        $stock = ProductStock::where('product_id', $id)->where('size', $request->size)->first();
+        if ($stock) {
+            $stock->delete();
+        }
         return response()->json(['success' => true]);
     }
     

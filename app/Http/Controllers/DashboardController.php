@@ -71,6 +71,9 @@ class DashboardController extends Controller
             foreach ($stocks as $stock) {
                 $stockArray[$stock->size] = $stock->quantity;
             }
+
+            $reviewCount = Review::where('product_id', $product->id)->count();
+            $avgRating = Review::where('product_id', $product->id)->avg('rating');
             
             $formattedProducts[] = [
                 'id' => $product->id,
@@ -79,16 +82,31 @@ class DashboardController extends Controller
                 'category' => $product->category,
                 'price' => $product->price,
                 'priceFormatted' => 'Rp ' . number_format($product->price, 0, ',', '.'),
-                'rating' => $product->rating ?? 4.5,
+                'rating' => $avgRating ? round($avgRating, 1) : 0,
+                'reviewCount' => $reviewCount,
                 'stock' => $stockArray,
                 'imageColor' => $product->image_color ?? '#1a1a2e',
+                'image' => $product->image ?? null,
                 'desc' => $product->description ?? 'Produk berkualitas dari StreetSole',
             ];
         }
         
+        $orders = Order::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
+        $reviews = Review::where('user_id', $user->id)->with('product')->get();
+
+        // Stats for About page
+        $totalProducts = Product::where('status', 'aktif')->count();
+        $totalCustomers = User::where('role', 'pembeli')->count();
+        $totalBrands = Product::where('status', 'aktif')->distinct('brand')->count('brand');
+
         return view('dashboard', [
             'user' => $user,
-            'products' => $formattedProducts
+            'products' => $formattedProducts,
+            'orders' => $orders,
+            'reviews' => $reviews,
+            'totalProducts' => $totalProducts,
+            'totalCustomers' => $totalCustomers,
+            'totalBrands' => $totalBrands,
         ]);
     }
 }

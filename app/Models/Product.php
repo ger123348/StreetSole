@@ -14,6 +14,7 @@ class Product extends Model
         'description',
         'rating',
         'image_color',
+        'image',
         'status',
     ];
 
