@@ -27,6 +27,7 @@ class CartController extends Controller
                     'rating' => $product->rating,
                     'stock' => [], // akan diisi dari product_stocks jika diperlukan
                     'imageColor' => $product->image_color,
+                    'image' => $product->image,
                     'desc' => $product->description,
                     'size' => $item->size,
                     'qty' => $item->quantity,
@@ -80,6 +81,7 @@ class CartController extends Controller
                 'price' => $product->price,
                 'priceFormatted' => 'Rp ' . number_format($product->price, 0, ',', '.'),
                 'imageColor' => $product->image_color,
+                'image' => $product->image,
                 'size' => $cartItem->size,
                 'qty' => $cartItem->quantity,
                 'cart_id' => $cartItem->id,

@@ -11,7 +11,7 @@
         * { font-family: 'Inter', sans-serif; }
         
         body { 
-            background: linear-gradient(135deg, #fffcf8 0%, #fef7f0 50%, #fdf5eb 100%);
+            background: linear-gradient(160deg, #fffdf9 0%, #fef5e7 35%, #f8eed8 65%, #fdf5eb 100%);
             overflow-x: hidden;
             color: #3e2a21;
         }
@@ -61,23 +61,36 @@
         }
         
         .glass-card {
-            background: rgba(255, 252, 248, 0.98);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(199,168,123,0.25);
-            box-shadow: 0 25px 45px rgba(0,0,0,0.05);
+            background: rgba(255, 252, 248, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(199,168,123,0.2);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.06), 0 0 0 1px rgba(199,168,123,0.05);
         }
         
         .btn-primary { 
-            background: linear-gradient(135deg, #c7a87b, #b08f64);
+            background: linear-gradient(135deg, #c7a87b 0%, #b08f64 50%, #c7a87b 100%);
+            background-size: 200% auto;
             color: white; 
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
         }
         
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .btn-primary:hover::before { left: 100%; }
+        
         .btn-primary:hover { 
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(199,168,123,0.3);
+            box-shadow: 0 12px 30px rgba(199,168,123,0.35);
+            background-position: right center;
         }
         
         .btn-primary:active {
@@ -215,12 +228,18 @@
             <div class="grid md:grid-cols-2 gap-8 items-center">
                 <!-- Kolom Kiri: Branding Premium -->
                 <div class="hidden md:flex flex-col space-y-8 animate-fade-up" style="animation-delay: 0.1s;">
-                    <div class="space-y-4">
+                    <div class="space-y-5">
                         <div class="decorative-line w-16"></div>
                         <p class="text-xs uppercase tracking-[0.3em] text-[#b7a07e] font-semibold">Est. 2023</p>
-                        <h1 class="text-7xl font-black tracking-tighter leading-[1.05]">
-                            <span class="bg-gradient-to-r from-[#5c3d2e] via-[#c7a87b] to-[#8b7355] bg-clip-text text-transparent">StreetSole</span><br>
-                          
+                        <div class="flex items-center gap-3 mb-2">
+                            <svg width="48" height="48" viewBox="0 0 120 120">
+                                <defs><linearGradient id="logoGradL" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#c7a87b"/><stop offset="100%" style="stop-color:#8b6914"/></linearGradient></defs>
+                                <circle cx="60" cy="60" r="56" fill="none" stroke="url(#logoGradL)" stroke-width="4"/>
+                                <text x="60" y="72" text-anchor="middle" font-family="Playfair Display,serif" font-weight="800" font-size="52" fill="url(#logoGradL)">SS</text>
+                            </svg>
+                        </div>
+                        <h1 class="text-6xl font-black tracking-tighter leading-[1.05]">
+                            <span class="bg-gradient-to-r from-[#5c3d2e] via-[#c7a87b] to-[#8b7355] bg-clip-text text-transparent">StreetSole</span>
                         </h1>
                         <h2 class="text-lg font-light text-[#8b7355] max-w-xs leading-relaxed">
                             Jejak Jalanan, Gaya Tanpa Batas
@@ -228,15 +247,26 @@
                     </div>
                     
                     <div class="pt-4">
+                        <!-- Trust badges -->
+                        <div class="flex items-center gap-4 mt-4">
+                            <div class="flex items-center gap-2 bg-white/60 backdrop-blur px-3 py-2 rounded-xl border border-[#e8ddce]">
+                                <i class="fas fa-shield-alt text-[#c7a87b] text-xs"></i>
+                                <span class="text-[10px] text-[#5c3d2e] font-semibold">100% Authentic</span>
+                            </div>
+                            <div class="flex items-center gap-2 bg-white/60 backdrop-blur px-3 py-2 rounded-xl border border-[#e8ddce]">
+                                <i class="fas fa-lock text-[#c7a87b] text-xs"></i>
+                                <span class="text-[10px] text-[#5c3d2e] font-semibold">Secure</span>
+                            </div>
+                        </div>
                         
                         <div class="flex items-center gap-3 mt-6">
-                            <div class="w-10 h-10 rounded-full border border-[#e8ddce] flex items-center justify-center bg-white">
+                            <div class="w-10 h-10 rounded-full border border-[#e8ddce] flex items-center justify-center bg-white shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
                                 <i class="fas fa-shoe-prints text-[#c7a87b] text-sm"></i>
                             </div>
-                            <div class="w-10 h-10 rounded-full border border-[#e8ddce] flex items-center justify-center bg-white">
+                            <div class="w-10 h-10 rounded-full border border-[#e8ddce] flex items-center justify-center bg-white shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
                                 <i class="fas fa-store text-[#c7a87b] text-sm"></i>
                             </div>
-                            <div class="w-10 h-10 rounded-full border border-[#e8ddce] flex items-center justify-center bg-white">
+                            <div class="w-10 h-10 rounded-full border border-[#e8ddce] flex items-center justify-center bg-white shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
                                 <i class="fas fa-truck-fast text-[#c7a87b] text-sm"></i>
                             </div>
                         </div>
@@ -482,13 +512,24 @@
             });
         }
 
-        // Tampilkan error dari session jika ada (TIDAK BERUBAH)
         @if(session('error'))
             showToast('{{ session('error') }}', true);
         @endif
 
         @if(session('success'))
             showToast('{{ session('success') }}', false);
+        @endif
+
+        @if(session('register_success'))
+            // Switch ke tab MASUK
+            loginTabBtn.classList.add('active', 'border-[#c7a87b]', 'text-[#c7a87b]');
+            loginTabBtn.classList.remove('text-[#b7a07e]', 'border-transparent');
+            registerTabBtn.classList.remove('active', 'border-[#c7a87b]', 'text-[#c7a87b]');
+            registerTabBtn.classList.add('text-[#b7a07e]', 'border-transparent');
+            if (loginFormContainer) loginFormContainer.style.display = 'block';
+            if (registerFormContainer) registerFormContainer.style.display = 'none';
+            // Tampilkan notifikasi sukses
+            showToast('{{ session('register_success') }}', false);
         @endif
 
         @if($errors->any())

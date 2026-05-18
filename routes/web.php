@@ -31,7 +31,8 @@ Route::middleware(['auth'])->group(function () {
 // Admin API routes (with auth)
 Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::post('/product/add', [AdminController::class, 'addProduct']);
-    Route::post('/product-stock/{stockId}/update', [AdminController::class, 'updateStock']);
+    Route::post('/product/{id}/update', [AdminController::class, 'updateProduct']);
+    Route::post('/product/{id}/delete-stock', [AdminController::class, 'deleteStockSize']);
     Route::post('/product/{id}/toggle-status', [AdminController::class, 'toggleProductStatus']);
     Route::delete('/product/{id}/delete', [AdminController::class, 'deleteProduct']);
     Route::post('/order/{orderId}/status', [AdminController::class, 'updateOrderStatus']);

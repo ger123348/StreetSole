@@ -89,11 +89,9 @@ class AuthController extends Controller
             'status' => 'aktif',
         ]);
 
-        // Auto login setelah register
-        Auth::login($user);
-
-        return redirect()->route('dashboard', ['role' => 'pembeli'])
-            ->with('success', 'Pendaftaran berhasil! Selamat datang ' . $user->first_name);
+        // Redirect ke halaman login dengan notifikasi sukses
+        return redirect()->route('login')
+            ->with('register_success', 'Akun Anda sudah terdaftar! Silakan masuk dengan akun baru Anda.');
     }
 
     /**
